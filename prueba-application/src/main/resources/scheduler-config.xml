@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       profile="scheduler-ram">      
+ 
+    <bean id="notifyRequestsJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
+        <property name="jobClass" value="pe.telefonica.siam.application.job.NotifyUnattendedRequestsJob"/> 
+    </bean>
+    <bean id="notifyRequestsTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="notifyRequestsJob"/>        
+        <property name="cronExpression" value="0 0 16 ? * * *" />
+    </bean> 
+    
+    
+    <bean id="notifyPasswordChangeJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
+        <property name="jobClass" value="pe.telefonica.siam.application.job.NotifyPasswordChangeJob"/> 
+    </bean>
+    
+    <bean id="notifyPasswordChangeTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="notifyPasswordChangeJob"/>        
+        <property name="cronExpression" value="0 30 8 * * ?" />
+    </bean> 
+    
+    <bean id="lockAutomaticallySiamUsersJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
+        <property name="jobClass" value="pe.telefonica.siam.application.job.LockAutomaticallySiamUsersJob"/> 
+    </bean>
+    
+    <bean id="lockAutomaticallySiamUsersTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="lockAutomaticallySiamUsersJob"/>        
+         <property name="cronExpression" value="0 0 19 ? * * *" />
+    </bean> 
+    
+    <bean id ="ramScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> 
+        <property name="schedulerName" value="quartzRamScheduler"/>
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="configLocation" value="classpath:/quartz-ram.properties"/> 
+        <property name="jobFactory" ref="quartzJobFactory"/>
+        <property name="triggers" >
+            <list>
+                <ref bean="lockAutomaticallySiamUsersTrigger" />
+                <ref bean="notifyRequestsTrigger" />  
+                <ref bean="notifyPasswordChangeTrigger" />  
+            </list>
+        </property>
+        <property name="autoStartup" value="true" />
+        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
+    </bean> 
+    
+</beans>

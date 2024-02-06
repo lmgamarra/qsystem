@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <named-native-query name="listarDominios"  >
+        <query>
+            SELECT
+                dom.dominio_id as domainId,
+                dom.dominio as domain,
+                emp.nombre as company,
+                emp.empresa_id as empresaId
+            FROM tm_dominios dom
+            INNER JOIN tm_empresas emp ON dom.empresa_id = emp.empresa_id
+            WHERE dom.state = 1
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="listarEmpresa"  >
+        <query>
+            SELECT*FROM tm_empresas emp
+            WHERE state = 1
+            WHERE emp.state = 1
+        </query>
+    </named-native-query>
+</entity-mappings>

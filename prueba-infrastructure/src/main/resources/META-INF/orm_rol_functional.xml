@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    
+    <named-native-query name="paginatedFunctionalRolesList"  >
+        <query>
+            SELECT 
+				ts.solicitud_id as [solicitudId],
+				ts.ticket_numero as [ticketNumero],
+				tts.tipo_solicitud_id as [tipoSolicitud.tipoSolicitudId],
+				tts.nombre as [tipoSolicitud.nombre],
+				ts.fecha_solicitud as [fechaSolicitud],
+				tes.estado_solicitud_id as [estadoSolicitud.estadoSolicitudId],
+				tes.nombre as [estadoSolicitud.nombre],
+				tes.color_hex as [estadoSolicitud.colorHex],
+				tes.codigo as [estadoSolicitud.codigo],
+				tp_apro.persona_id as [aprobador.personaId],
+				tp_apro.nombres as [aprobador.nombres],
+				tp_apro.paterno as [aprobador.paterno],
+				tp_apro.materno as [aprobador.materno],
+				tp_apro.email as [aprobador.email]
+			FROM trf_solicitudes ts
+				inner join trfm_tipos_solicitudes tts on tts.tipo_solicitud_id = ts.tipo_solicitud_id
+				inner join trfm_estados_solicitudes tes on tes.estado_solicitud_id = ts.estado_solicitud_id
+				left join tus_personas tp_apro on tp_apro.persona_id = ts.aprobador_id
+				WHERE #filter
+				ORDER BY #sort_column #sort_direction
+				OFFSET #start ROWS
+				FETCH NEXT #page_size ROWS ONLY
+        </query>
+    </named-native-query>
+
+    <named-native-query name="paginatedFunctionalRolesList.cantidad"  >
+        <query>
+            SELECT 
+				count(*)				
+			FROM trf_solicitudes ts
+				inner join trfm_tipos_solicitudes tts on tts.tipo_solicitud_id = ts.tipo_solicitud_id
+				inner join trfm_estados_solicitudes tes on tes.estado_solicitud_id = ts.estado_solicitud_id
+				left join tus_personas tp_apro on tp_apro.persona_id = ts.aprobador_id
+				WHERE #filter
+        </query>
+    </named-native-query>
+
+    
+</entity-mappings>

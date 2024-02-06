@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    
+    <named-native-query name="paginatedPointSaleList"  >
+        <query>        
+            SELECT 
+            tpv.punto_venta_id as [puntoVentaId], 
+            tpv.codigo as [codigo], 
+            tpv.nombre as [nombrePuntoVenta], 
+            tpv.grupo_ad as [grupoAd], 
+            tpv.codigo_atis as [codigoAtis],
+            tpv.codigo_agencia as [codigoAgencia],
+            tpv.codigo_franquicia as [codigoFranquicia],
+            tpv.direccion as [direccion], 
+            tpv.ubigeo as [ubigeo], 
+            tupv.distrito as [ubigeoPuntoVenta.distrito], 
+            tupv.provincia as [ubigeoPuntoVenta.provincia], 
+            tupv.departamento as [ubigeoPuntoVenta.departamento],
+            tpv.createdate as [createdate],
+            tpv.expirydate as [expirydate],
+            tpv.connection as [connection] 
+            FROM tm_puntos_ventas tpv
+            left join tm_ubigeo_punto_venta tupv on tupv.ubigeo = tpv.ubigeo
+            WHERE #filter
+            ORDER BY #sort_column #sort_direction
+            OFFSET #start ROWS
+            FETCH NEXT #page_size ROWS ONLY        	
+        </query>
+    </named-native-query>
+
+    <named-native-query name="paginatedPointSaleList.cantidad"  >
+        <query>
+            SELECT 
+            count(*) 
+            FROM tm_puntos_ventas tpv
+            left join tm_ubigeo_punto_venta tupv on tupv.ubigeo = tpv.ubigeo
+            WHERE #filter
+        </query>
+    </named-native-query>
+    
+</entity-mappings>

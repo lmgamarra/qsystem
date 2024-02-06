@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"	
+    targetNamespace="http://api.siam.telefonica.pe/schema/muerte-informatica"
+    xmlns:tns="http://api.siam.telefonica.pe/schema/muerte-informatica"	
+    elementFormDefault="qualified">
+    
+    <xs:element name="bajaTrabajadorRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="documentoUsuario">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="tipoDocumento">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="codigoAccion">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="10" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="usuarioSolic">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="nroTicketHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="bajaTrabajadorResponse">
+        <xs:complexType>
+            <xs:sequence>
+             	<xs:element name="ticketSIAM" type="xs:string" />
+             	<xs:element name="codigoError" type="xs:string" />
+             	<xs:element name="descripcion" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

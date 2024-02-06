@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    
+    <named-native-query name="paginatedEmployeeList"  >
+        <query>
+            select 
+            tus_per.persona_id as [persona.personaId],
+            tus_per.nombres as [persona.nombres],
+            tus_per.paterno as  [persona.paterno],
+            tus_per.materno as  [persona.materno],
+            tusm_tip_doc.codigo as [persona.tipoDocumento.codigo],
+            tus_per.numero_doc as [persona.numDocumento],
+            trf_rol_fun.nombre as [rolFuncional.nombre],
+            tga_rol_per.rol_persona_id as [rolPersonaId],
+            tm_pun_ven.nombre as [puntoVenta.nombrePuntoVenta],
+            tm_emp.nombre as [puntoVenta.entidad.empresa.nombreEmpresa]
+            from tus_personas tus_per
+            join tusm_tipos_documentos tusm_tip_doc on tus_per.tipo_documento_id = tusm_tip_doc.tipo_documento_id
+             join tga_roles_personas tga_rol_per on tus_per.persona_id = tga_rol_per.persona_id and tga_rol_per.[state] = 1
+             join trf_roles_funcionales trf_rol_fun on trf_rol_fun.rol_funcional_id = tga_rol_per.rol_funcional_id and trf_rol_fun.[state] = 1
+             join tm_puntos_ventas tm_pun_ven on tga_rol_per.punto_venta_id = tm_pun_ven.punto_venta_id and tm_pun_ven.[state] = 1
+             join tm_entidades tm_ent on tm_ent.entidad_id = tm_pun_ven.entidad_id and tm_ent.[state] = 1 
+             join tm_empresas tm_emp on tm_emp.empresa_id = tm_ent.empresa_id and tm_emp.[state] = 1
+            where tus_per.[state] = 1
+            and #filter
+            ORDER BY #sort_column #sort_direction
+            OFFSET #start ROWS
+            FETCH NEXT #page_size ROWS ONLY
+        </query>
+    </named-native-query>
+
+    <named-native-query name="paginatedEmployeeList.cantidad"  >
+        <query>
+            select 
+            count(*)
+            from tus_personas tus_per
+            join tusm_tipos_documentos tusm_tip_doc on tus_per.tipo_documento_id = tusm_tip_doc.tipo_documento_id
+             join tga_roles_personas tga_rol_per on tus_per.persona_id = tga_rol_per.persona_id and tga_rol_per.[state] = 1
+             join trf_roles_funcionales trf_rol_fun on trf_rol_fun.rol_funcional_id = tga_rol_per.rol_funcional_id and trf_rol_fun.[state] = 1
+             join tm_puntos_ventas tm_pun_ven on tga_rol_per.punto_venta_id = tm_pun_ven.punto_venta_id and tm_pun_ven.[state] = 1
+             join tm_entidades tm_ent on tm_ent.entidad_id = tm_pun_ven.entidad_id and tm_ent.[state] = 1 
+             join tm_empresas tm_emp on tm_emp.empresa_id = tm_ent.empresa_id and tm_emp.[state] = 1
+            where tus_per.[state] = 1
+            and #filter
+        </query>
+    </named-native-query>
+
+    
+</entity-mappings>

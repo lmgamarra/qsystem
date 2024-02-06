@@ -1,0 +1,26 @@
+{
+	"userSecurityType": "UserSecurityDto",
+	"nombre": "ADMIN_SIAM",
+	"perfilId": 127,
+	"persona": {
+		"personType": "PersonDto",
+		"email": "admin@tdp.com",
+		"nombres": "Juan Rodrigo",
+		"paterno": "Robledo",
+		"materno": "Ramos",
+		"numDocumento": "22222229",
+		"celular": "938852217",
+		"telefonoFijo": "013658985",
+		"state": true,
+		"tipoDocumento": {
+			"documentType": "DocumentTypeDto",
+			"tipoDocumentoId": 4,
+			"codigo": "DNI",
+			"state": true
+		}
+	},
+	"puntoVenta": {
+		"pointSaleType": "PointSaleDto",
+		"puntoVentaId": 8378
+	}
+}

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="http://java.sun.com/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+        version="2.0">
+     <named-native-query name="RdaEntity.listarUsuariosValidar"  >
+        <query>
+            select 
+            STRING_AGG(CAST(r.rda_id as varchar(100)), ',')  as rda_ids,
+            r.ejecucion_id,
+            d.codigo as tipo_documento,
+            per.numero_doc as nro_documento,
+            CONCAT_WS(' ', per.nombres, per.paterno, ISNULL(per.materno,'')) as nombres,
+            en.nombre as entidad, 
+            STRING_AGG(a.nombre, ', ') as aplicaciones
+            from tcc_rda r
+            join tcc_politicas e on r.ejecucion_id = e.ejecucion_id_ult 
+            join tga_usuarios_prov u on r.usuario_prov_id = u.usuario_prov_id
+            join tga_roles_personas rp on rp.rol_persona_id = u.rol_persona_id 
+            join tm_puntos_ventas p on rp.punto_venta_id = p.punto_venta_id
+            join tm_entidades en on p.entidad_id = en.entidad_id 
+            join tus_personas per on rp.persona_id = per.persona_id
+            join tusm_tipos_documentos d on per.tipo_documento_id = d.tipo_documento_id
+            join trf_aplicaciones a on u.aplicacion_id = a.aplicacion_id
+            where e.[state]=1 and r.[state]=1 and u.[state]=1 and rp.[state] = 1
+            and p.[state]=1 and en.[state]=1 and per.[state]=1
+            and en.empresa_id=:empresaId
+            and r.accion_id is null
+            %s
+            group by 
+            r.ejecucion_id,d.codigo,per.numero_doc,per.nombres, per.paterno,  per.materno ,en.nombre 
+        </query>
+     </named-native-query>
+     <named-native-query name="RdaEntity.buscarPersonaIdPorRdaId" >
+         <query>  
+              select top 1 u.persona_id
+             from tcc_rda r
+             join tga_usuarios_prov u on r.usuario_prov_id = u.usuario_prov_id
+             where r.rda_id = ?1
+         </query>
+     </named-native-query> 
+   
+     <named-native-query name="RdaEntity.actualizarRda" >
+         <query>  
+             update tcc_rda set
+             accion_id = :accion_id, 
+             encargado_id = :encargado_id,
+             fecha_cese = :fecha_cese,
+             genera_ticket =  iif(:accion_id = 3,1,0) 
+             where rda_id =:rda_id
+         </query>
+     </named-native-query>
+     <named-native-query name="RdaEntity.buscarIdEjecucionPorRdaId" >
+         <query>  
+            select ejecucion_id from tcc_rda where rda_id =:rda_id
+         </query>
+     </named-native-query>
+     <named-native-query name="RdaEntity.listarPersonasBorradasRda" >
+         <!-- 3 = Accion Eliminar-->
+         <query>
+            select distinct per.persona_id, per.numero_doc, per.nombres, per.paterno, per.materno, per.email, per.telefono_fijo,
+             per.telefono_celular, per.autenticacion_biometrica, per.es_vendedor, per.tipo_documento_id, 
+             rp.punto_venta_id, rp.rol_funcional_id, r.fecha_cese
+            from tcc_rda r
+            join tga_usuarios_prov u on r.usuario_prov_id = u.usuario_prov_id
+            join tus_personas per on u.persona_id = per.persona_id
+            join tga_roles_personas rp on rp.rol_persona_id = u.rol_persona_id
+            where accion_id =3
+            and r.ejecucion_id=:ejecucion_id
+            and u.[state]=1
+            and per.[state]=1
+            and rp.[state]=1 
+         </query>
+     </named-native-query>
+     <named-native-query name="RdaEntity.registrarTicketBajaRda" >
+         <!-- 
+            estado_ejecucion_tic_id | 3 Estado aprobado              | tga_estados_ejecuciones_tic
+            tipo_ticket_id          | 1 Gestion de Accesos           | tm_tipos_tickets
+            tipo_solicitud_id       | 2 Baja                         | tm_tipos_solicitudes
+            estado_ejecucion_id     | 1 Registrado
+         -->
+         <query>  
+            INSERT INTO tgr_tickets(ticket_numero, estado_ejecucion_tic_id, tipo_ticket_id, ejecucion_cn_id, fecha_cierre, cantidad_solicitudes, 
+            tipo_solicitud_id, empresa_id, [state], user_create, created_at, socio_id, estado_ejecucion_id)
+            VALUES
+            (:ticket_numero, 3, 1, :ejecucion_cn_id, :fecha_cierre, :cantidad_solicitudes, 
+              2, :empresa_id, 1, :user_create, GETDATE(), :socio_id, 1)
+         </query>
+     </named-native-query>
+     <named-native-query name="RdaEntity.registrarSolicitudBajaRda" >
+         <!---
+            estado_ejecucion_sol_id | 1 Registrado          | tga_estados_ejecuciones_sol
+         -->
+         <query>  
+           INSERT INTO tga_solicitudes(ticket_id, estado_ejecucion_sol_id, subticket_numero, punto_venta_id, persona_id, 
+            rol_funcional_id, fecha_cese, [state], user_create, created_at, estado_ejecucion_id)
+            VALUES (:ticket_id, 1, :subticket_numero, :punto_venta_id, :persona_id, :rol_funcional_id, :fecha_cese, 1, :user_create, GETDATE(), 1)
+         </query>
+     </named-native-query>
+     <named-native-query name="RdaEntity.registrarSolicitudPersonaBajaRda" >
+         <query>  
+         INSERT INTO tga_solicitudes_personas (solicitud_id, numero_doc, nombres, paterno, materno, email,
+             telefono_fijo, telefono_celular, autenticacion_biometrica, es_vendedor, tipo_documento_id, [state], user_create, created_at)
+             values(:solicitud_id, :numero_doc, :nombres, :paterno, :materno, :email,
+             :telefono_fijo, :telefono_celular, :autenticacion_biometrica, :es_vendedor, :tipo_documento_id, 1, :user_create, GETDATE())
+         </query>
+     </named-native-query>
+     
+     <sql-result-set-mapping name="RdaResult">
+        <constructor-result target-class="pe.telefonica.siam.domain.entity.RdaValidacionEntity">
+            <column name="rda_ids" class="java.lang.String"/>
+            <column name="ejecucion_id" class="java.lang.Long"/>
+            <column name="tipo_documento" class="java.lang.String"/>
+            <column name="nro_documento" class="java.lang.String"/>
+            <column name="nombres" class="java.lang.String"/>
+            <column name="entidad" class="java.lang.String"/>
+            <column name="aplicaciones" class="java.lang.String"/>
+        </constructor-result>
+    </sql-result-set-mapping>
+</entity-mappings>

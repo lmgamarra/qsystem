@@ -1,0 +1,9 @@
+{
+	"personaId": 1,
+	"responsable": {
+		"responsableId": 1,
+		"canal": {
+			"canalId": 3
+		}
+	}
+}

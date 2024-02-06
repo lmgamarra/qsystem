@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"	
+    targetNamespace="http://api.siam.telefonica.pe/schema/users"
+    xmlns:tns="http://api.siam.telefonica.pe/schema/users"	
+    elementFormDefault="qualified">
+    
+    <!-- Bloquear usuario -->
+    <xs:element name="bloquearUsuarioRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="documentoUsuario">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="tipoDocumento">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="codigoAccion">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="10" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="etiqueta">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="usuarioHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="areaSolicitante">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="motivo">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="nroTicketHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="bloquearUsuarioResponse">
+        <xs:complexType>
+            <xs:sequence>
+            	<xs:element name="documentoUsuario" type="xs:string" />
+             	<xs:element name="tipoDocumento" type="xs:string" />
+             	<xs:element name="nombreUsuario" type="xs:string" />
+             	<xs:element name="ticketSIAM" type="xs:string" />
+             	<xs:element name="codigoError" type="xs:string" />
+             	<xs:element name="descripcionError" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    
+    <!-- Desbloquear usuario -->
+    <xs:element name="desbloquearUsuarioRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="documentoUsuario">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="tipoDocumento">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="codigoAccion">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="10" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="etiqueta">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="usuarioHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="areaSolicitante">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="motivo">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="nroTicketHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="desbloquearUsuarioResponse">
+        <xs:complexType>
+            <xs:sequence>
+            	<xs:element name="documentoUsuario" type="xs:string" />
+             	<xs:element name="tipoDocumento" type="xs:string" />
+             	<xs:element name="nombreUsuario" type="xs:string" />
+             	<xs:element name="ticketSIAM" type="xs:string" />
+             	<xs:element name="codigoError" type="xs:string" />
+             	<xs:element name="descripcionError" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <!-- Bloquear aplicacion usuario -->
+    <xs:element name="bloquearAplicacionRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="documentoUsuario">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="tipoDocumento">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="codigoAccion">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="10" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="codigoAplicacion">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="etiqueta">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="usuarioHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="areaSolicitante">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="motivo">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="nroTicketHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="bloquearAplicacionResponse">
+        <xs:complexType>
+            <xs:sequence>
+            	<xs:element name="documentoUsuario" type="xs:string" />
+             	<xs:element name="tipoDocumento" type="xs:string" />
+             	<xs:element name="nombreUsuario" type="xs:string" />
+             	<xs:element name="ticketSIAM" type="xs:string" />
+             	<xs:element name="codigoError" type="xs:string" />
+             	<xs:element name="descripcionError" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <!-- desbloquear aplicacion usuario -->
+    <xs:element name="desbloquearAplicacionRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="documentoUsuario">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="tipoDocumento">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="codigoAccion">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="10" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="codigoAplicacion">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="etiqueta">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="usuarioHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="areaSolicitante">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="motivo">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="nroTicketHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="desbloquearAplicacionResponse">
+        <xs:complexType>
+            <xs:sequence>
+            	<xs:element name="documentoUsuario" type="xs:string" />
+             	<xs:element name="tipoDocumento" type="xs:string" />
+             	<xs:element name="nombreUsuario" type="xs:string" />
+             	<xs:element name="ticketSIAM" type="xs:string" />
+             	<xs:element name="codigoError" type="xs:string" />
+             	<xs:element name="descripcionError" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <!-- Bloquear usuario -->
+    <xs:element name="detalleCuentaPersonaRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="documentoUsuario">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="tipoDocumento">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="codigoAccion">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="10" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="etiqueta">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="usuarioHaross">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="areaSolicitante">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="20" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="motivo">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100" />
+                            <xs:minLength value="1"/>
+                            <xs:whiteSpace value="collapse" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="detalleCuentaPersonaResponse">
+        <xs:complexType>
+            <xs:sequence>
+            	<xs:element name="documentoUsuario" type="xs:string" />
+             	<xs:element name="tipoDocumento" type="xs:string" />
+             	<xs:element name="nombreUsuario" type="xs:string" />
+             	<xs:element name="codigoError" type="xs:string" />
+             	<xs:element name="descripcionError" type="xs:string" />
+             	<xs:element name="detalleCuentaPersona" type="tns:detalleCuentaPersona" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:complexType name="detalleCuentaPersona">
+        <xs:sequence>
+            <xs:element name="cuenta" type="xs:string"/>
+            <xs:element name="estadoCuenta" type="xs:string"/>
+            <xs:element name="aplicacion" type="xs:string"/>
+            <xs:element name="fechaCreacion" type="xs:string"/>
+            <xs:element name="perfil" type="xs:string"/>
+            <xs:element name="observacion" type="xs:string"/>
+            <xs:element name="nroTicketHaross" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+        
+    <xs:complexType name="serviceStatus">
+        <xs:sequence>
+            <xs:element name="statusCode" type="xs:string"/>
+            <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

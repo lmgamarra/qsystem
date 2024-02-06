@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    
+    <named-native-query name="ExecutionReviewEntity.listarEjecuciones"  >
+        <query>
+            select 
+            e.ejecucion_id,
+            t.politica_id, 
+            tipo.nombre as nombre_politica, 
+            tipo.descripcion as descrip_politica, 
+            e.fecha_ejecucion,
+            t.tipo_politica_id, 
+            t.tipo_frecuencia_id,
+            est.nombre as estado_ejecucion,
+            est.estado_ejecucion_id
+            from tcc_ejecuciones e
+            join tcc_politicas t on t.politica_id = e.politica_id 
+            join tccm_estados_ejecuciones est on e.estado_ejecucion_id = est.estado_ejecucion_id
+            join tccm_tipos_politicas tipo on tipo.tipo_politica_id= t.tipo_politica_id
+            where e.[state]= 1 and t.[state]=1
+            %s
+            ORDER BY %s %s
+            OFFSET (:page_number - 1) * :page_size ROWS
+            FETCH NEXT :page_size ROWS ONLY
+        </query>
+    </named-native-query>
+
+    <named-native-query name="ExecutionReviewEntity.buscarEjecucion"  >
+        <query>
+            select 
+            e.ejecucion_id,
+            t.politica_id, 
+            tipo.nombre as nombre_politica, 
+            tipo.descripcion as descrip_politica, 
+            e.fecha_ejecucion,
+            t.tipo_politica_id, 
+            t.tipo_frecuencia_id,
+            est.nombre as estado_ejecucion,
+            est.estado_ejecucion_id
+            from tcc_ejecuciones e
+            join tcc_politicas t on t.politica_id = e.politica_id 
+            join tccm_estados_ejecuciones est on e.estado_ejecucion_id = est.estado_ejecucion_id
+            join tccm_tipos_politicas tipo on tipo.tipo_politica_id= t.tipo_politica_id
+            where e.[state]= 1 and t.[state]=1
+            and e.ejecucion_id =:ejecucion_id
+        </query>
+    </named-native-query>
+</entity-mappings>

@@ -1,0 +1,52 @@
+{
+  "solicitudId": 0,
+  "ticketNumero": "",
+  "tipoSolicitud": {
+    "tipoSolicitudId": 0
+  },
+  "functionalRole": {
+    "rolFuncionalId": 0
+  },
+  "fechaEjecucion": "",
+  "fechaSolicitud": "",
+  "fechaAprobacion": "",
+  "estadoSolicitud": {
+    "estadoSolicitudId": 0,
+    "codigo": ""
+  },
+  "responsable": {
+    "personaId": 0
+  },
+  "canal": {
+    "canalId": 0
+  },
+  "aprobador": {
+    "personaId": 0
+  },
+  "perfilador": {
+    "personaId": 0
+  },
+  "fechaCierre": "",
+  "sustento": "",
+  "comentarioAprobador": "",
+  "comentarioPerfilamiento": "",
+  "aplicaciones": [
+    {
+      "aplicacionId": 0
+    }
+  ],
+  "base64EncryptedFile": "",
+  "nombreRol": "",
+  "nombreArchivo": "",
+  "profilesFunctional": [
+    {
+      "perfilId": 0
+    }
+  ],
+  "idRolFuncionalOld": "",
+  "ticketNumeroModificacion": "",
+  "archivoAdjunto": {
+    "adjuntoId": 0,
+    "nombreArchivo": ""
+  }
+}

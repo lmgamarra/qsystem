@@ -1,0 +1,31 @@
+{
+    "ticketType": "TicketDto",
+    "solicitudes": [
+        {
+            "ticketRequestType": "TicketRequestDto",
+            "rolFuncional": {
+                "functionalRoleType": "FunctionalRoleDto",
+                "rolFuncionalId": 52
+            },
+            "puntoVenta": {
+                "pointSaleType": "PointSaleDto",
+                "puntoVentaId": 3664
+            },
+            "solicitudPersona": {
+                "personRequestType": "PersonRequestDto",
+                "email": "admin@tdp.com",
+                "nombres": "Juan Alberto",
+                "paterno": "Perez",
+                "materno": "Mejia",
+                "numDocumento": "46868689",
+                "celular": "938852217",
+                "tipoDocumento": {
+                    "documentType": "DocumentTypeDto",
+                    "tipoDocumentoId": 4,
+                    "codigo": "DNI",
+                    "state": true
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    
+    <named-native-query name="paginatedConfigFunctionalRoleList"  >
+        <query>
+            SELECT 
+			trf.rol_funcional_id AS [rolFuncionalId],
+			trf.nombre AS [nombreRolFuncional]
+		from
+			trf_roles_funcionales trf
+		INNER JOIN trf_perfiles_roles_funcionales tprf ON
+			tprf.rol_funcional_id = trf.rol_funcional_id
+		INNER JOIN trf_perfiles tp ON
+			tp.perfil_id = tprf.perfil_id
+		INNER JOIN trf_aplicaciones ta on
+			ta.aplicacion_id = tp.aplicacion_id
+		WHERE
+			ta.aplicacion_id in (2, 4)
+			AND trf.state = 1
+			AND tprf.state = 1
+			AND tp.state = 1
+		 	AND ta.state = 1
+            and #filter
+            GROUP BY  trf.rol_funcional_id,trf.nombre
+            ORDER BY #sort_column #sort_direction
+            OFFSET #start ROWS
+            FETCH NEXT #page_size ROWS ONLY
+        </query>
+    </named-native-query>
+
+    <named-native-query name="paginatedConfigFunctionalRoleList.cantidad"  >
+        <query>
+             SELECT  COUNT(*)
+from ( SELECT trf.rol_funcional_id AS [rolFuncionalId],trf.nombre AS [nombreRolFuncional]
+	FROM
+		trf_roles_funcionales trf
+	INNER JOIN trf_perfiles_roles_funcionales tprf ON
+			tprf.rol_funcional_id = trf.rol_funcional_id
+	INNER JOIN trf_perfiles tp ON
+			tp.perfil_id = tprf.perfil_id
+	INNER JOIN trf_aplicaciones ta on
+			ta.aplicacion_id = tp.aplicacion_id
+	WHERE
+			ta.aplicacion_id in (2, 4)
+		AND trf.state = 1
+		AND tprf.state = 1
+		AND tp.state = 1
+		AND ta.state = 1
+		AND #filter
+	GROUP BY
+		trf.rol_funcional_id,
+		trf.nombre) t;
+        </query>
+    </named-native-query>
+
+    
+</entity-mappings>

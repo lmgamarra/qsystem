@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <named-native-query name="listarSolicitudes"  >
+        <query>
+            select   
+            s.ticket_id,
+            s.solicitud_id,
+            s.created_at as fecha_creacion,
+            tip.nombre as nombre_tipo_solicitud,
+            concat_ws(' ',tip_doc.codigo, p.numero_doc, p.nombres, p.paterno, p.materno) as nombres_trabajador,
+            p.numero_doc,
+            s.persona_id,
+            s.estado_reintento,
+            est.nombre as nombreEstadoEjecucionSol,
+            s.estado_ejecucion_sol_id,
+            CASE s.estado_reintento
+              WHEN 0 THEN 'Pendiente'
+              WHEN 1 THEN 'Requerido'  
+              WHEN 2 THEN 'En proceso' 
+              WHEN 3 THEN 'Éxito'
+              WHEN 4 THEN 'Fallido'
+            END as nombreEstadoReintento,
+            emp.nombre as nombreEmpresa
+            from 
+            tgr_tickets t 
+            join tga_solicitudes s on s.ticket_id = t.ticket_id
+            join tga_solicitudes_personas p on s.solicitud_id = p.solicitud_id 
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp on t.empresa_id = emp.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id=s.estado_ejecucion_sol_id
+            join tusm_tipos_documentos tip_doc on p.tipo_documento_id=tip_doc.tipo_documento_id
+            where 
+            t.[state]=1 and s.[state]=1 and p.[state]=1 
+            and (s.created_at between :fechaInicio and :fechaTermino)
+        </query>
+    </named-native-query>
+    
+   <named-native-query name="listarValidacionCarnetExtranjeria"  >
+        <query>
+	select   
+            s.ticket_id,
+            s.solicitud_id,
+            s.created_at as fecha_creacion,
+            tip.nombre as nombre_tipo_solicitud,
+            concat_ws(' ',tip_doc.codigo, p.numero_doc, p.nombres, p.paterno, p.materno) as nombres_trabajador,
+            p.numero_doc,
+            s.persona_id,
+            s.estado_reintento,
+            est.nombre as nombreEstadoEjecucionSol,
+            s.estado_ejecucion_sol_id,
+            CASE s.estado_reintento
+              WHEN 0 THEN 'Pendiente'
+              WHEN 1 THEN 'Requerido'  
+              WHEN 2 THEN 'En proceso' 
+              WHEN 3 THEN 'Éxito'
+              WHEN 4 THEN 'Fallido'
+            END as nombreEstadoReintento,
+            emp.nombre as nombreEmpresa
+            from 
+            tgr_tickets t 
+            join tga_solicitudes s on s.ticket_id = t.ticket_id
+            join tga_solicitudes_personas p on s.solicitud_id = p.solicitud_id 
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp on t.empresa_id = emp.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id=s.estado_ejecucion_sol_id
+            join tusm_tipos_documentos tip_doc on p.tipo_documento_id=tip_doc.tipo_documento_id
+            where 
+            t.[state]=1 and s.[state]=1 and p.[state]=1 and (tip.tipo_solicitud_id = 1 or tip.tipo_solicitud_id = 3) and s.estado_ejecucion_sol_id = 5 and p.tipo_documento_id = 1			
+            and (s.created_at between :fechaInicio and :fechaTermino)
+        </query>
+    </named-native-query>
+        <named-native-query name="cantidadValidacionCarnetExtranjeria"  >
+        <query>
+            select   
+            count(s.solicitud_id)
+            from 
+            tgr_tickets t 
+            join tga_solicitudes s on s.ticket_id = t.ticket_id
+            join tga_solicitudes_personas p on s.solicitud_id = p.solicitud_id 
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp on t.empresa_id = emp.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id=s.estado_ejecucion_sol_id
+            join tusm_tipos_documentos tip_doc on p.tipo_documento_id=tip_doc.tipo_documento_id
+            where 
+            t.[state]=1 and s.[state]=1 and p.[state]=1 and (tip.tipo_solicitud_id = 1 or tip.tipo_solicitud_id = 3) and s.estado_ejecucion_sol_id = 5 and p.tipo_documento_id = 1 
+            and (s.created_at between :fechaInicio and :fechaTermino)
+        </query>
+    </named-native-query>    
+    <named-native-query name="cantidadSolicitudes"  >
+        <query>
+            select   
+            count(s.solicitud_id)
+            from 
+            tgr_tickets t 
+            join tga_solicitudes s on s.ticket_id = t.ticket_id
+            join tga_solicitudes_personas p on s.solicitud_id = p.solicitud_id 
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp on t.empresa_id = emp.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id=s.estado_ejecucion_sol_id
+            join tusm_tipos_documentos tip_doc on p.tipo_documento_id=tip_doc.tipo_documento_id
+            where 
+            t.[state]=1 and s.[state]=1 and p.[state]=1 
+            and (s.created_at between :fechaInicio and :fechaTermino)
+        </query>
+    </named-native-query>
+    <named-native-query name="buscarSolicitud">
+        <query>
+select   top 1
+            s.ticket_id,
+            s.solicitud_id,
+            s.created_at as fecha_creacion,
+            t.tipo_ticket_id as tipoTicketId,
+            t.tipo_solicitud_id as tipoSolicitudId,
+            CASE
+				WHEN t.tipo_ticket_id = 4 AND t.tipo_solicitud_id = 1
+				THEN 'ALTA SIAM'
+				ELSE tip.nombre 
+			END as nombre_tipo_solicitud,		
+            concat_ws(' ',tip_doc.codigo, p.numero_doc, p.nombres, p.paterno, p.materno) as nombres_trabajador,
+			p.fecha_nacimiento as fecha_nacimiento_trabajador,
+            t.gestor_id,
+            concat_ws(' ',tpd.codigo, tp.numero_doc, tp.nombres, tp.paterno,tp.materno) as nombresAprobador,
+            t.socio_id,
+            concat_ws(' ',tpds.codigo, tps.numero_doc, tps.nombres, tps.paterno,tps.materno) as nombresSolicitante,
+            tp.numero_doc as numeroDocAprobador,
+            pun.nombre as nombrePuntoVenta,
+            com.nombre as nombreCanalComercial,
+            p.numero_doc,
+            s.persona_id,
+            s.estado_reintento,
+            est.nombre as nombreEstadoEjecucionSol,
+            s.estado_ejecucion_sol_id,
+            CASE s.estado_reintento
+              WHEN 0 THEN 'Pendiente'
+              WHEN 1 THEN 'Requerido'  
+              WHEN 2 THEN 'En proceso' 
+              WHEN 3 THEN 'Éxito'
+              WHEN 4 THEN 'Fallido'
+            END as nombreEstadoReintento,
+            r.nombre as nombreRolFuncional,
+            emp.nombre as nombreEmpresa,
+			tus.nombre as usuarioNombre,
+			tpe.nombre as nombrePerfil
+            from 
+            tgr_tickets t 
+            join tga_solicitudes s on s.ticket_id = t.ticket_id
+            join tga_solicitudes_personas p on s.solicitud_id = p.solicitud_id
+            left join tus_personas tpso on tpso.numero_doc = p.numero_doc and tpso.tipo_documento_id = p.tipo_documento_id
+			left join tsg_usuarios tus on tus.persona_id = tpso.persona_id
+			left join tsg_perfiles tpe on tpe.perfil_id = tus.perfil_id 
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp_solicitante on t.empresa_id = emp_solicitante.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id=s.estado_ejecucion_sol_id
+            join tusm_tipos_documentos tip_doc on p.tipo_documento_id=tip_doc.tipo_documento_id
+            join tm_puntos_ventas pun on pun.punto_venta_id = s.punto_venta_id
+            join trf_roles_funcionales r on r.rol_funcional_id=s.rol_funcional_id
+            left join tm_entidades en on pun.entidad_id = en.entidad_id
+			left join tm_empresas emp on en.empresa_id = emp.empresa_id
+            left join tm_canales_comerciales com on en.canal_comercial_id = com.canal_comercial_id
+            left join tsg_usuarios ta on ta.usuario_id = t.gestor_id             
+            left join tus_personas tp on tp.persona_id = ta.persona_id
+            left join tusm_tipos_documentos tpd on tpd.tipo_documento_id = tp.tipo_documento_id
+            left join tsg_usuarios ts on ts.usuario_id = t.socio_id
+            left join tus_personas tps on tps.persona_id = ts.persona_id
+            left join tusm_tipos_documentos tpds on tpds.tipo_documento_id = tps.tipo_documento_id
+            where 
+            t.[state]=1 and s.[state]=1 and p.[state]=1
+            and s.solicitud_id=:solicitud_id
+            ORDER BY tpso.persona_id DESC
+        </query>
+    </named-native-query>
+<!--     iif(l.exito =1, 'Operación completada con éxito',
+                iif( CHARINDEX(CHAR(10),l.observacion,0) != 0, 
+                SUBSTRING(l.observacion,0, CHARINDEX(CHAR(10),l.observacion,0) ), l.observacion)
+                )as observacion,-->
+    <named-native-query name="listarAprovisionamientos">
+        <query>
+            select 
+            l.log_id,  
+            l.aplicacion_id,
+            a.nombre as nombre_aplicacion,
+            l.created_at as fecha_creacion,
+            l.solicitud_id,
+            l.usuario_prov_id as usuario_id, 
+            u.nombre_usuario_prov as nombre_usuario ,
+            tip.nombre as nombre_tipo_solicitud,
+            l.metodo,
+           iif(l.exito =1, 'Operación completada con éxito', l.observacion) as observacion,
+            l.peticion,
+            l.respuesta,
+            l.finalizado,
+            l.exito,
+            fi.codigo as nombre_perfil,
+             l.tiempo_ejecucion 
+            from tga_log_ws l   
+            join trf_perfiles fi on l.perfil_id = fi.perfil_id
+            join trf_aplicaciones a on fi.aplicacion_id=a.aplicacion_id
+            join tm_tipos_solicitudes tip on tip.tipo_solicitud_id = l.tipo_solicitud_id
+            left join tga_usuarios_prov u on l.usuario_prov_id = u.usuario_prov_id
+            where
+             l.state = 1 and l.solicitud_id=:solicitud_id
+            and l.metodo != 'existeUsuario'
+             order by  l.created_at
+        </query>
+    </named-native-query>
+    
+    
+        <named-native-query name="listarAprovisionamientosExito">
+        <query>
+            select 
+            l.log_id,  
+            l.aplicacion_id,
+            a.nombre as nombre_aplicacion,
+            l.created_at as fecha_creacion,
+            l.solicitud_id,
+            l.usuario_prov_id as usuario_id, 
+            u.nombre_usuario_prov as nombre_usuario ,
+            tip.nombre as nombre_tipo_solicitud,
+            l.metodo,
+           iif(l.exito =1, 'Operación completada con éxito', l.observacion) as observacion,
+            l.peticion,
+            l.respuesta,
+            l.finalizado,
+            l.exito,
+            fi.codigo as nombre_perfil,
+             l.tiempo_ejecucion 
+            from tga_log_ws l   
+            join trf_perfiles fi on l.perfil_id = fi.perfil_id
+            join trf_aplicaciones a on fi.aplicacion_id=a.aplicacion_id
+            join tm_tipos_solicitudes tip on tip.tipo_solicitud_id = l.tipo_solicitud_id
+            left join tga_usuarios_prov u on l.usuario_prov_id = u.usuario_prov_id
+            where
+             l.state = 1 and l.exito =1 and l.solicitud_id=:solicitud_id
+            and l.metodo != 'existeUsuario'
+             order by  l.created_at
+        </query>
+    </named-native-query>
+    
+    
+    <!-- and l.metodo not in('buscarUsuario') -->
+
+    <named-native-query name="listarValidaciones">
+        <query>
+          select val.solicitud_id, val.solicitud_validacion_id,
+        val.tipo_validacion_id,  tip.nombre as nombre_tipo_validacion,
+        iif( CHARINDEX(CHAR(10),val.observacion,0) != 0, 
+               SUBSTRING( val.observacion,0, CHARINDEX(CHAR(10),val.observacion,0) ), val.observacion) observacion, 
+        val.tiempo_ejecucion, val.created_at as fecha_creacion,
+            val.resultado_validacion
+        from
+        tga_solicitudes_validaciones val 
+        join tgam_tipos_validaciones tip on val.tipo_validacion_id=tip.tipo_validacion_id
+        where val.[state]=1  
+        and val.solicitud_id=:solicitud_id
+        order by  val.created_at  
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="contAllValidacionCarnetExtranjeria">
+        <query>
+	select   
+            count(s.ticket_id)
+            from 
+            tgr_tickets t 
+            join tga_solicitudes s on s.ticket_id = t.ticket_id
+            join tga_solicitudes_personas p on s.solicitud_id = p.solicitud_id 
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp on t.empresa_id = emp.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id=s.estado_ejecucion_sol_id
+            join tusm_tipos_documentos tip_doc on p.tipo_documento_id=tip_doc.tipo_documento_id
+            where 
+            t.[state]=1 and s.[state]=1 and p.[state]=1 and tip.tipo_solicitud_id = 1 and s.estado_ejecucion_sol_id = 5 and p.tipo_documento_id = 1					
+        </query>
+    </named-native-query>
+  
+</entity-mappings>

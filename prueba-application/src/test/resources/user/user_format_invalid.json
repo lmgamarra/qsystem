@@ -1,0 +1,25 @@
+{
+	"userSecurityType": "UserSecurityDto",
+	"nombre": "ADMIN_SIAM ADMIN_SIAM ADMIN_SIAM ADMIN_SIAM ADMIN_SIAM ADMIN_SIAM ADMIN_SIAM ADMIN_SIAM ADMIN_SIAM ADMIN_SIAM",
+	"perfilId": 127,
+	"persona": {
+		"personType": "PersonDto",
+		"email": "admin",
+		"nombres": "Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo",
+		"paterno": "Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo",
+		"materno": "Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos",
+		"numDocumento": "22222229 22222229 22222229 22222229 22222229",
+		"celular": "938852217 938852217 938852217 938852217 938852217 938852217 938852217",
+		"state": true,
+		"tipoDocumento": {
+			"documentType": "DocumentTypeDto",
+			"tipoDocumentoId": 4,
+			"codigo": "DNI",
+			"state": true
+		}
+	},
+	"puntoVenta": {
+		"pointSaleType": "PointSaleDto",
+		"puntoVentaId": 8378
+	}
+}

@@ -1,0 +1,19 @@
+{
+	
+	"nombrePerfil": "NUEVO PERFIL",
+	"modulos": [
+		{			
+			"moduloId": 4,
+			"acciones": [
+				{
+					"actionType": "ActionDto",
+					"rolId": 13
+				},
+				{
+					"actionType": "ActionDto",
+					"rolId": 14
+				}
+			]
+		}
+	]
+}

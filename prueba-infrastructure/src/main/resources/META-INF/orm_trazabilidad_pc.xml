@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <named-native-query name="listarSolicitudes"  >
+        <query>
+            select
+            s.ticket_id,
+            s.solicitud_id,
+            s.created_at as fecha_creacion,
+            tip.nombre as nombre_tipo_solicitud,
+            a.mac_address,
+            a.nombre_asignado as nombre_activo,
+            est.nombre as nombre_estado_ejecucion_sol,
+            s.estado_ejecucion_sol_id,
+            emp.nombre as nombre_empresa
+            from
+            tac_tickets t
+            join tac_solicitudes s on s.ticket_id = t.ticket_id
+            join tac_activos_solicitudes a on s.solicitud_id = a.solicitud_id
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp on t.empresa_id = emp.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id = s.estado_ejecucion_sol_id
+            where
+            t.[state]=1 and s.[state]=1 and a.[state]=1
+            and (s.created_at between :fechaInicio and :fechaTermino)
+        </query>
+    </named-native-query>
+
+    <named-native-query name="cantidadSolicitudes"  >
+        <query>
+            select   
+            count(s.solicitud_id)
+            from
+            tac_tickets t
+            join tac_solicitudes s on s.ticket_id = t.ticket_id
+            join tac_activos_solicitudes a on s.solicitud_id = a.solicitud_id
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp on t.empresa_id = emp.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id = s.estado_ejecucion_sol_id
+            where
+            t.[state]=1 and s.[state]=1 and a.[state]=1
+            and (s.created_at between :fechaInicio and :fechaTermino)
+        </query>
+    </named-native-query>
+
+    <named-native-query name="buscarSolicitud">
+        <query>
+            select
+            s.ticket_id,
+            s.solicitud_id,
+            s.created_at as fecha_creacion,
+            s.fecha_aprobacion,
+            tip.nombre as nombre_tipo_solicitud,
+            a.mac_address,
+            a.nombre_asignado as nombre_activo,
+            est.nombre as nombre_estado_ejecucion_sol,
+            s.estado_ejecucion_sol_id,
+            emp.nombre as nombre_empresa,
+            pun.nombre as nombre_punto_venta_destino,
+            pun.grupo_ad as grupo_ad_destino,
+            pun_ori.nombre as nombre_punto_venta_origen,
+            pun_ori.grupo_ad as grupo_ad_origen,
+            mar.nombre_marca,
+            tipa.nombre_activo as nombre_tipo_activo,
+            mo.nombre_motivo,
+            t.aprobador,
+            concat_ws(' ',tpd.codigo, tp.numero_doc, tp.nombres, tp.paterno, tp.materno) as nombres_aprobador,
+            t.solicitante,
+            concat_ws(' ',tpds.codigo, tps.numero_doc, tps.nombres, tps.paterno, tps.materno) as nombres_solicitante
+            from
+            tac_tickets t
+            join tac_solicitudes s on s.ticket_id = t.ticket_id
+            join tac_activos_solicitudes a on s.solicitud_id = a.solicitud_id
+            join tm_tipos_solicitudes tip on t.tipo_solicitud_id = tip.tipo_solicitud_id
+            join tm_empresas emp on t.empresa_id = emp.empresa_id
+            join tga_estados_ejecuciones_sol est on est.estado_ejecucion_sol_id = s.estado_ejecucion_sol_id
+            join tacm_marcas mar on a.marca_id = mar.marca_id
+            join tacm_tipos_activos tipa on a.tipo_activo_id = tipa.tipo_activo_id
+            join tacm_motivos mo on s.motivo_id = mo.motivo_id
+            join tm_puntos_ventas pun on pun.punto_venta_id = s.punto_venta_id
+            left join tac_equipos eq on eq.equipo_id = s.equipo_id
+            left join tm_puntos_ventas pun_ori on pun_ori.punto_venta_id = eq.punto_venta_origen_id
+            left join tsg_usuarios ta on ta.usuario_id = t.aprobador
+            left join tus_personas tp on tp.persona_id = ta.persona_id
+            left join tusm_tipos_documentos tpd on tpd.tipo_documento_id = tp.tipo_documento_id
+            left join tsg_usuarios ts on ts.usuario_id = t.solicitante
+            left join tus_personas tps on tps.persona_id = ts.persona_id
+            left join tusm_tipos_documentos tpds on tpds.tipo_documento_id = tps.tipo_documento_id
+            where
+            t.[state]=1 and s.[state]=1 and a.[state]=1
+            and s.solicitud_id=:solicitud_id
+        </query>
+    </named-native-query>
+</entity-mappings>

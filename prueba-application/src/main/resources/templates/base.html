@@ -1,0 +1,19 @@
+<#macro layout>
+    <table style="width:100%;max-width: 700px;font-family: Tahoma, Arial, sans-serif;font-size: 14px">
+        <tr>
+            <td style="width:30%" ><img src="${urlSiam}/assets/images/img_correo.png" width="60"></td>
+            <td style="width:70%"></td>
+        </tr>
+        <tr>
+            <td colspan='2'>
+                <#nested>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;padding-top: 10px">
+                Atte. Telefónica del Perú
+            </td>
+        </tr>
+    </table> 
+</#macro>
+

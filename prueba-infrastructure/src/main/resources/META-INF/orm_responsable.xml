@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    
+    <named-native-query name="paginatedResponsableList"  >
+        <query>
+            SELECT 
+            	tr.responsable_id as [responsable.responsableId],
+				tr.cip as [responsable.cip],
+				tr.cargo as [responsable.cargo],
+				tr.canal_id as [responsable.canal.canalId],
+				tr.persona_id as [personaId],
+				tr.direccion as [responsable.direccion],
+				tr.gerencia as [responsable.gerencia],
+				tr.ticket_remedy as [responsable.ticketRemedy],
+				tr.tipo as [responsable.tipo],
+				tr.sustento as [responsable.sustento],
+				ttd.tipo_documento_id as [tipoDocumento.tipoDocumentoId],
+				tp.numero_doc as [numDocumento],
+				tp.nombres as [nombres],
+				tp.email as [email],
+				tp.telefono_celular as [celular],
+				tp.paterno as [paterno],
+				tp.materno as [materno],
+				tc.canal_comercial_id as [responsable.canal.canalComercial.canalComercialId],
+				tc.canal_generico_id as [responsable.canal.canalGenerico.canalGenericoId],
+				tcc.canal_amdocs_id as [responsable.canal.canalComercial.canalAmdocs.canalAmdocsId],
+				tcc.nombre as [responsable.canal.canalComercial.nombre]
+				FROM trf_responsables tr 
+				inner join tm_canales tc on tc.canal_id = tr.canal_id
+				inner join tm_canales_comerciales tcc on tcc.canal_comercial_id = tc.canal_comercial_id
+				inner join tm_canales_genericos tcg on tcg.canal_generico_id = tc.canal_generico_id
+				inner join tus_personas tp on tp.persona_id = tr.persona_id
+				inner join tusm_tipos_documentos ttd on ttd.tipo_documento_id = tp.tipo_documento_id
+			WHERE tr.state = 1 AND tp.state = 1
+				AND #filter
+				ORDER BY #sort_column #sort_direction
+				OFFSET #start ROWS
+				FETCH NEXT #page_size ROWS ONLY
+        </query>
+    </named-native-query>
+
+    <named-native-query name="paginatedResponsableList.cantidad"  >
+        <query>
+        	SELECT 
+	        	count(*) 
+			FROM trf_responsables tr 
+				inner join tm_canales tc on tc.canal_id = tr.canal_id
+				inner join tm_canales_comerciales tcc on tcc.canal_comercial_id = tc.canal_comercial_id
+				inner join tm_canales_genericos tcg on tcg.canal_generico_id = tc.canal_generico_id
+				inner join tus_personas tp on tp.persona_id = tr.persona_id
+				inner join tusm_tipos_documentos ttd on ttd.tipo_documento_id = tp.tipo_documento_id
+			WHERE tr.state = 1 AND tp.state = 1 AND #filter
+        </query>
+    </named-native-query>
+</entity-mappings>

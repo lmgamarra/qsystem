@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="http://java.sun.com/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+        version="2.0"> 
+     <named-native-query name="PolicyTypeSIAMEntity.listarTipos" result-set-mapping="PolicyTypeResult" >
+        <query>
+           select t.tipo_politica_id, t.nombre, t.descripcion 
+            from tccm_tipos_politicas t
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="FrequencyTypeSIAMEntity.listarFrecuencias" result-set-mapping="FrequencyTypeResult" >
+        <query>
+         select t.tipo_frecuencia_id, t.nombre, t.dias
+        from tm_tipos_frecuencias t
+        order by t.orden
+        </query>
+    </named-native-query>
+ 
+    <named-native-query name="FrequencyTypeSIAMEntity.buscarFrecuencia" result-set-mapping="FrequencyTypeResult" >
+        <query>
+         select t.tipo_frecuencia_id, t.nombre, t.dias
+        from tm_tipos_frecuencias t
+        where t.tipo_frecuencia_id = ?1
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="PolicySIAMEntity.buscarPoliticaPorTipo" result-set-mapping="PolicyResult" >
+        <query>
+            select t.politica_id, t.tipo_politica_id, t.tipo_frecuencia_id,
+            t.nombre, t.dias_sin_uso, t.fecha_inicial, t.fecha_siguiente,
+            ISNULL(est.nombre, 'Pendiente de ejecución') as estado_ejecucion,
+            ISNULL(e.fecha_finalizacion, e.fecha_ejecucion) as fecha_ultima_ejecucion
+            from tcc_politicas t
+            left join tcc_ejecuciones e on t.ejecucion_id_ult = e.ejecucion_id
+            left join tccm_estados_ejecuciones est on e.estado_ejecucion_id = est.estado_ejecucion_id
+            where t.tipo_politica_id = ?1
+        </query>
+    </named-native-query>
+    <named-native-query name="RdaSIAMEntity.registrarRdas"  >
+        <query>
+            INSERT INTO tcc_rda(ejecucion_id,usuario_prov_id,alcance_siam,user_create,[state])
+            SELECT ?1 as ejecucion_id,
+            u.usuario_prov_id,
+            iif(a.tipo_provision_id != 2,1,0) as alcance_siam,
+            -1 as user_create,
+            1
+            FROM  tga_usuarios_prov u 
+            join trf_aplicaciones a on a.aplicacion_id = u.aplicacion_id
+            join tus_personas per on u.persona_id = per.persona_id
+            where u.[state]=1 and per.[state] = 1 and
+            (u.bloqueado is null or u.bloqueado = 0)
+        </query>
+    </named-native-query>
+   
+    <named-native-query name="PolicySIAMEntity.listarPersonasPorPerfil"  >
+        <query>
+            select distinct CONCAT_WS(' ', p.nombres, p.paterno, ISNULL(p.materno,'')) as nombres, p.email 
+            from tus_personas p
+            join tsg_usuarios u on p.persona_id=u.persona_id 
+            join tsg_perfiles f on u.perfil_id=f.perfil_id
+            where p.email is not null and trim(p.email) != ''
+            and p.[state] =1 and u.[state]=1 and f.[state]=1 and (u.bloqueado is null or u.bloqueado = 0) 
+            and f.perfil_id=?1
+        </query>
+    </named-native-query>
+    
+</entity-mappings>

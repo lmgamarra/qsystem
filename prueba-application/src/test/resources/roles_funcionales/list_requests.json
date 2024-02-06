@@ -1,0 +1,38 @@
+{
+  "pageNumber": 0,
+  "pageSize": 10,
+  "totalPages": 1,
+  "active": "ticketNumero",
+  "query": "",
+  "totalElements": 4,
+  "data": [
+    {
+      "solicitudId": 1,
+      "ticketNumero": "REQ202110260000001",
+      "tipoSolicitud": {
+        "tipoSolicitudId": 1
+      }
+    },
+    {
+      "solicitudId": 2,
+      "ticketNumero": "REQ202110260000002",
+      "tipoSolicitud": {
+        "tipoSolicitudId": 3
+      }
+    },
+    {
+      "solicitudId": 3,
+      "ticketNumero": "REQ202110260000003",
+      "tipoSolicitud": {
+        "tipoSolicitudId": 2
+      }
+    },
+    {
+      "solicitudId": 4,
+      "ticketNumero": "REQ202110260000004",
+      "tipoSolicitud": {
+        "tipoSolicitudId": 1
+      }
+    }
+  ]
+}  

@@ -1,0 +1,12 @@
+{
+	"userSecurityType": "UserSecurityDto",
+	"persona": {
+		"personType": "PersonDto",
+		"tipoDocumento": {
+			"documentType": "DocumentTypeDto"
+		}
+	},
+	"puntoVenta": {
+		"pointSaleType": "PointSaleDto"
+	}
+}

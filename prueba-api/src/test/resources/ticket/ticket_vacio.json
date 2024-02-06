@@ -1,0 +1,20 @@
+{
+	"ticketType": "TicketDto",
+	"solicitudes": [
+		{
+			"ticketRequestType": "TicketRequestDto",
+			"rolFuncional": {
+				"functionalRoleType": "FunctionalRoleDto"
+			},
+			"puntoVenta": {
+				"pointSaleType": "PointSaleDto"
+			},
+			"solicitudPersona": {
+				"personRequestType": "PersonRequestDto",
+				"tipoDocumento": {
+					"documentType": "DocumentTypeDto"
+				}
+			}
+		}
+	]
+}

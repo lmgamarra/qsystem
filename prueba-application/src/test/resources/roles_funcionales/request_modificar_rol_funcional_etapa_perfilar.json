@@ -1,0 +1,68 @@
+{
+  "solicitudId": 1,
+  "ticketNumero": "REQ2021101800001",
+  "tipoSolicitud": {
+    "tipoSolicitudId": 2,
+    "nombre": "Modificar rol funcional"
+  },
+  "functionalRole": {
+    "rolFuncionalId": 2,
+    "nombre": "APP_NUEVO_001"
+  },
+  "fechaEjecucion": null,
+  "fechaSolicitud": null,
+  "fechaAprobacion": null,
+  "estadoSolicitud": {
+    "estadoSolicitudId": 0,
+    "codigo": "CREATE"
+  },
+  "responsable": {
+    "personaId": 100,
+    "email": "romanguerreros.rs@gmail.com",
+    "nombres": "Raphael",
+    "paterno": "Roman",
+    "materno": "Guerreros"
+  },
+  "canal": {
+    "canalId": 3
+  },
+  "aprobador": {
+    "personaId": 15,
+    "email": "aprobador001@gmail.com"
+  },
+  "perfilador": {
+    "personaId": 200
+  },
+  "fechaCierre": null,
+  "sustento": "PRUEBA NUEVO ROL FUNCIONAL",
+  "comentarioAprobador": null,
+  "comentarioPerfilamiento": null,
+  "aplicaciones": [
+    {
+      "aplicacionId": 1
+    },
+    {
+      "aplicacionId": 2
+    },
+    {
+      "aplicacionId": 3
+    }
+  ],
+  "base64EncryptedFile": null,
+  "nombreRol": "APP_NUEVO_001",
+  "nombreArchivo": null,
+  "profilesFunctional": [
+    {
+      "perfilId": 19
+    },
+    {
+      "perfilId": 27
+    },
+    {
+      "perfilId": 100
+    }
+  ],
+  "idRolFuncionalOld": 1,
+  "ticketNumeroModificacion": null,
+  "archivoAdjunto": null
+}

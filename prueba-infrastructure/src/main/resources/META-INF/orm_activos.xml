@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <named-native-query name="listarActivos"  >
+        <query>
+            SELECT
+                a.mac_address,
+                a.nombre_asignado as asignado,
+                mrc.nombre_marca marca,
+                pdv.nombre as pdv,
+                pdv.grupo_ad ad,
+                mt.nombre_motivo as motivo,
+                case when a.state = 1 then 'Activo' else 'Inactivo' end as estado_activo
+            FROM tac_equipos a
+                left join tacm_marcas mrc on a.marca_id = mrc.marca_id
+                left join tm_puntos_ventas pdv on a.punto_venta_origen_id = pdv.punto_venta_id
+                left join (
+                    select equipo_id, max(solicitud_id) as solicitud_id
+                    from tac_solicitudes
+                    group by equipo_id
+                ) s_max on a.equipo_id = s_max.equipo_id
+                left join tac_solicitudes s on s_max.solicitud_id = s.solicitud_id
+                left join tacm_motivos mt on s.motivo_id = mt.motivo_id
+            WHERE 1=1
+        </query>
+    </named-native-query>
+
+    <named-native-query name="cantidadActivos">
+        <query>
+            SELECT
+                count(a.equipo_id)
+            FROM tac_equipos a
+                left join tacm_marcas mrc on a.marca_id = mrc.marca_id
+                left join tm_puntos_ventas pdv on a.punto_venta_origen_id = pdv.punto_venta_id
+                left join (
+                select equipo_id, max(solicitud_id) as solicitud_id
+                from tac_solicitudes
+                group by equipo_id
+                ) s_max on a.equipo_id = s_max.equipo_id
+                left join tac_solicitudes s on s_max.solicitud_id = s.solicitud_id
+                left join tacm_motivos mt on s.motivo_id = mt.motivo_id
+            WHERE 1=1
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="listarMarca"  >
+        <query>
+            SELECT
+                marca_id,
+                nombre
+            FROM tacm_marcas
+            WHERE state = 1
+        </query>
+    </named-native-query>
+</entity-mappings>

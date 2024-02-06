@@ -1,0 +1,31 @@
+{
+	"ticketType": "TicketDto",
+	"solicitudes": [
+		{
+			"ticketRequestType": "TicketRequestDto",
+			"rolFuncional": {
+				"functionalRoleType": "FunctionalRoleDto",
+				"rolFuncionalId": 52
+			},
+			"puntoVenta": {
+				"pointSaleType": "PointSaleDto",
+				"puntoVentaId": 3664
+			},
+			"solicitudPersona": {
+				"personRequestType": "PersonRequestDto",
+				"email": "admin",
+				"nombres": "Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo Juan Rodrigo",
+				"paterno": "Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo Robledo",
+				"materno": "Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos Ramos",
+				"numDocumento": "22222229 22222229 22222229 22222229 22222229",
+				"celular": "938852217 938852217 938852217 938852217 938852217 938852217 938852217",
+				"tipoDocumento": {
+					"documentType": "DocumentTypeDto",
+					"tipoDocumentoId": 4,
+					"codigo": "DNI",
+					"state": true
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,5585 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: TEST SERVICES
+  description: Servicios de prueba
+  termsOfService: http://localhost/prueba/
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags: 
+- name: blockApp
+  description: Todo sobre bloqueo de aplicaciones.
+- name: application reset password
+  description: Todo sobre el reseteo de contraseñas de las distintas aplicaciones de los usuarios.
+- name: application
+  description: Todo sobre las distintas aplicaciones para el acceso y monitoreo de usuarios.
+- name: profile
+  description: Todo sobre los distintos perfiles SIAM
+- name: security 
+  description: Todo sobre seguridad SIAM
+- name: security master
+  description: Maestro de seguridad
+- name: pageable
+  description: servicios paginados 
+- name: sales-hierarchy
+  description: Jerarquia de ventas
+- name: documentType
+  description: Lista de documentos
+- name: motivosPc
+  description: Lista de documentos  
+- name: ticket
+  description: Módulo de tickets
+- name: employee
+  description: Modulo de trabajadores
+- name: responsable
+  description: Lista de responsables
+- name: person
+  description: Lista de personas
+- name: amdocsChannel
+  description: Listado de canales Amdocs
+- name: channel
+  description: Listado de canales
+- name: requestStatus
+  description: Lista de estados de solicitudes
+- name: request
+  description: Lista de solicitudes
+- name: profileFunctional
+  description: Lista de perfiles para los roles funcionales
+- name: profileParameter
+  description: Lista de parametros de perfiles
+- name: requestRetry
+  description: Reintento de solicitudes fallidas
+- name: setting
+  description: Configuraciones del sistema SIAM
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/fergalero/PRUEBA/1.0.0
+  - description: prueba
+    url: https://localhost:8080
+    
+paths: 
+
+
+  /blockApp/listEnabledUsers:
+    get:
+      tags: 
+      - blockApp
+      summary: Obtiene la lista de usuarios para bloquear o desbloquear
+      description: Retorna los usuarios activos y sus datos personales para bloquear o desbloquear
+      operationId: findPageableEnabledUsers
+      parameters: 
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: query
+          in: query
+          description: consulta de búsqueda
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: active
+          in: query
+          description: columna/campo para el ordenamiento asc o desc
+          required: false
+          schema:
+            $ref: '#/components/schemas/UserSecurityPageableActive'
+        - name: direction
+          in: query
+          description: ordenamiento descendente o ascendente
+          required: false
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.
+  
+  /blockApp/listStatusApplications:
+    post:
+      tags: 
+      - blockApp
+      summary: Lista todas las aplicaciones del usuario con el estado de procesamiento en el que se encuentren
+      description: Retorna la lista de aplicaciones del usuario según su estado
+      operationId: findStatusApplications
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/StatusApplicationsRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/StatusApplicationsResponse'
+        400:
+          description: Valor de parametros no válidos.
+  
+  /blockApp/blockAllAppRequest:
+      post:
+        tags: 
+        - blockApp
+        summary: Solicita el bloqueo o desbloqueo de todas las aplicaciones de un usuario
+        description: Retorna el ticket con el que se realizó la solicitud de bloqueo o desbloqueo de todas las aplicaciones incluyendo la de SIAM.
+        operationId: blockAllAppRequest
+        requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/BlockAllAppRequest'
+        responses:
+          200:
+            description: successful operation
+            content:
+              'application/json':
+                schema:
+                  $ref: '#/components/schemas/ValidateMessage'
+          422:
+            description: validation error
+            content:
+              'text/plain':
+                schema:
+                  type: string
+                  example: message
+                  
+  /blockApp/unLockUserSiamRequest:
+      post:
+        tags: 
+        - blockApp
+        summary: Solicita el desbloqueo de un usuario Siam
+        description: Solicita el desbloqueo del usuario Siam según su id y el motivo
+        operationId: unLockUserSiamRequest
+        requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UnLockUserSiamRequest'
+        responses:
+          200:
+            description: successful operation
+            content:
+              'application/json':
+                schema:
+                  $ref: '#/components/schemas/ValidateMessage'
+          422:
+            description: validation error
+            content:
+              'text/plain':
+                schema:
+                  type: string
+                  example: message
+
+
+  /resetpassword/listApplicationsAndPolicies:
+      get:
+        tags: 
+        - application reset password
+        summary: Obtiene la lista de aplicaciones disponiwwbles con sus políticas de contraseña
+        description: Retorna las aplicaciones activas de un usuario con sus respectivas políticas
+        operationId: findAllApplicationsAndPolicies
+        responses:
+          200:
+            description: successful operation
+            content:
+              'application/json':
+                schema:
+                  type: "array"
+                  items:
+                    $ref: '#/components/schemas/ApplicationAndPolicyPassword'
+          400:
+            description: Valor de parametros no válidos.
+  
+  /resetpassword/applicationResetPasswordRequest:
+      post:
+        tags: 
+        - application reset password
+        summary: Solicita el cambio de contraseña de una aplicación
+        description: Retorna un mensaje de éxito o error según sea el caso
+        operationId: resetPasswordRequest
+        requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApplicationResetPasswordRequest'
+        responses:
+          200:
+            description: successful operation
+            content:
+              'application/json':
+                schema:
+                  $ref: '#/components/schemas/ApplicationResetPasswordResponse'
+          422:
+            description: validation error
+            content:
+              'text/plain':
+                schema:
+                  type: string
+                  example: message
+                  
+  /resetpassword/siam:
+      post:
+        tags: 
+        - application reset password
+        summary: Solicita el cambio de contraseña de siam
+        description: Retorna un mensaje de éxito o error según sea el caso
+        operationId: siamResetPasswordRequest
+        requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/SiamResetPasswordRequest'
+        responses:
+          200:
+            description: successful operation
+            content:
+              'application/json':
+                schema:
+                  $ref: '#/components/schemas/ApplicationResetPasswordResponse'
+          422:
+            description: validation error
+            content:
+              'text/plain':
+                schema:
+                  type: string
+                  example: message
+            
+  /application/{id}:
+    get:
+      tags:
+      - application
+      summary: Obtener aplicación por ID de aplicación.
+      description: Retorna la aplicación por ID.
+      operationId: getApplicationId
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Application'
+        400:
+          description: Se proporcionó un ID de aplicación no válido
+        404:
+          description: Aplicación no encontrada
+        
+  /application/findByStatus:
+    get:
+      tags:
+      - application
+      summary: Obtiene las aplicaciones de SIAM por estado
+      description: Retorna todas las aplicaciones de SIAM por estado
+      operationId: findByStatus
+      parameters: 
+        - name: status
+          in: query
+          description: estado del aplicativo
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+        400:
+          description: Valor de estado no válido.
+          
+  /application:
+    get:
+      tags:
+      - application
+      summary: Obtiene las aplicaciones de SIAM 
+      description: Retorna todas las aplicaciones de SIAM
+      operationId: findAll
+      parameters: 
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.
+          
+    post:
+      tags: 
+      - application
+      summary: insertar una nueva aplicación
+      description: insertar una nueva aplicación
+      operationId: addApplication
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Application'
+          
+      responses:
+        405:
+          description: Entrada invalida
+  /application/all:
+    get:
+      tags:
+      - application
+      summary: Obtiene las aplicaciones de SIAM 
+      description: Retorna todas las aplicaciones de SIAM
+      operationId: findAllApplication      
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Application'
+        400:
+          description: Valor de parametros no válidos. 
+
+  /profile/{id}/users:
+    get:
+      tags:
+      - profile
+      summary: Obtener usuarios por perfil.
+      description: Retorna lista de usuarios por perfil
+      operationId: getUsersByPerfilId
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/UserSecurity'
+        400:
+          description: Se proporcionó un ID de perfil no válido
+        404:
+          description: No existe data
+          
+  /profile/{id}/users/update:
+    put:
+      tags: 
+      - profile
+      summary: asignar perfiles de usuarios de forma masiva
+      description: asignar perfiles de usuarios de forma masiva
+      operationId: assignProfiles
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/ChangeUserProfile'
+          
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: ID invalido
+        404:
+          description: Perfil no encontrado
+        405:
+          description:  Valor de parametros no válidos.
+
+  /profile/{id}:
+    get:
+      tags:
+      - profile
+      summary: Obtener perfil por ID.
+      description: Retorna perfil por ID.
+      operationId: getProfileById
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Profile'
+        400:
+          description: Se proporcionó un ID de perfil no válido
+        404:
+          description: Perfil no encontrada
+          
+    put:
+      tags: 
+      - profile
+      summary: actualizar perfil por ID
+      description: actualizar perfil por ID
+      operationId: updateProfile
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Profile'
+          
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Profile'
+        400:
+          description: ID invalido
+        404:
+          description: Perfil no encontrado
+        405:
+          description:  Valor de parametros no válidos.
+  
+    delete:
+      tags: 
+      - profile
+      summary: eliminar perfil por ID
+      description: eliminar erfil por ID
+      operationId: deleteProfile
+      parameters: 
+      - name: id
+        in: path
+        description: 'Identificador de perfil'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: boolean
+        400:
+          description: ID invalido
+        404:
+          description: Perfil no encontrado
+
+  /profile:
+    get:
+      tags:
+      - profile
+      summary: Obtiene todos los perfiles SIAM
+      description: Retorna todos los perfiles SIAM
+      operationId: findPageableProfiles
+      parameters: 
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: query
+          in: query
+          description: consulta de búsqueda
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: active
+          in: query
+          description: columna/campo para el ordenamiento asc o desc
+          required: false
+          schema:
+            $ref: '#/components/schemas/ProfilePageableActive'
+        - name: direction
+          in: query
+          description: ordenamiento descendente o ascendente
+          required: false
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.
+
+    post:
+      tags: 
+      - profile
+      summary: insertar un nuevo perfil
+      description: insertar un nuevo perfil
+      operationId: addProfile
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Profile'
+          
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Profile'
+        405:
+          description: Entrada invalida
+          
+  /profile/authorized:
+    get:
+      tags:
+      - profile
+      summary: Obtiene todos los perfiles SIAM autorizados para creación de usuario
+      description: Retorna todos los perfiles SIAM autorizados para creación de usuario
+      operationId: findAuthorizedProfiles
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Profile'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /profile/all:
+    get:
+      tags:
+      - profile
+      summary: Obtiene todos los perfiles SIAM
+      description: Retorna todos los perfiles SIAM
+      operationId: findAllProfiles
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Profile'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /employee/documentType/{tipoDocumentoId}/documentNumber/{numDocumento}:
+    get:
+      tags:
+      - employee
+      summary: Obtiene a un trabajador según tipo y numero de documento
+      description: Retorna un trabajador según tipo y numero de documento
+      operationId: findEmployeeByDocument
+      parameters: 
+      - name: tipoDocumentoId
+        in: path
+        description: 'ID tipo de documento'
+        required: true
+        schema:
+          type: integer
+      - name: numDocumento
+        in: path
+        description: 'Número de documento'
+        required: true
+        schema:
+          type: string
+          default: 99999999
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Employee'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /employee/segregacion/documentType/{tipoDocumentoId}/documentNumber/{numDocumento}:
+    get:
+      tags:
+      - employee
+      summary: Obtiene a un trabajador según tipo y numero de documento
+      description: Retorna un trabajador según tipo y numero de documento
+      operationId: findEmployeeSegregacionByDocument
+      parameters: 
+      - name: tipoDocumentoId
+        in: path
+        description: 'ID tipo de documento'
+        required: true
+        schema:
+          type: integer
+      - name: numDocumento
+        in: path
+        description: 'Número de documento'
+        required: true
+        schema:
+          type: string
+          default: 99999999
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Employee'
+        400:
+          description: Valor de parametros no válidos.
+                    
+  /userSecurity/documentType/{id}/documentNumber/{numero}/person:
+    get:
+      tags:
+      - security master
+      summary: Obtiene a persona según tipo y numero de documento
+      description: Retorna persona según tipo y numero de documento
+      operationId: findPersonByDocument
+      parameters: 
+      - name: id
+        in: path
+        description: 'ID tipo de documento'
+        required: true
+        schema:
+          type: integer
+      - name: numero
+        in: path
+        description: 'Número de documento'
+        required: true
+        schema:
+          type: string
+          default: 99999999
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Person'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /userSecurity/parameters:
+    get:
+      tags:
+      - security master
+      summary: Obtiene a persona según tipo y numero de documento
+      description: Retorna persona según tipo y numero de documento
+      operationId: findParameters
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Parameter'
+        400:
+          description: Valor de parametros no válidos.
+
+
+  /userSecurity/{usuarioId}:
+  
+    delete:
+      tags: 
+      - userSecurity
+      summary: eliminar usuario por ID
+      description: eliminar usuario por ID
+      operationId: deleteUser
+      parameters: 
+      - name: usuarioId
+        in: path
+        description: 'Identificador de usuario'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: boolean
+        400:
+          description: ID invalido
+        404:
+          description: Usuario no encontrado
+          
+    put:
+      tags: 
+      - userSecurity
+      summary: actualizar usuario por ID
+      description: actualizar usuario por ID
+      operationId: updateUser
+      parameters: 
+      - name: usuarioId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserSecurity'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserSecurity'
+        400:
+          description: ID invalido
+        404:
+          description: Usuario no encontrado
+        405:
+          description:  Valor de parametros no válidos.
+   
+  /userSecurity:
+    get:
+      tags: 
+      - userSecurity
+      summary: Obtiene los usuarios SIAM
+      description: Retorna los usuarios de SIAM
+      operationId: findAllUserSecurity
+      parameters: 
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: query
+          in: query
+          description: consulta de búsqueda
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: active
+          in: query
+          description: columna/campo para el ordenamiento asc o desc
+          required: false
+          schema:
+            $ref: '#/components/schemas/UserSecurityPageableActive'
+        - name: direction
+          in: query
+          description: ordenamiento descendente o ascendente
+          required: false
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.
+
+    post:
+      tags: 
+      - userSecurity
+      summary: insertar una nuevo usuario SIAM
+      description: insertar una nuevo usuario SIAM
+      operationId: addUserSecurity
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UserSecurity'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserSecurity'
+        405:
+          description: Entrada invalida 
+
+  /userSecurity/gestoresCesados/{perfilId}/{empresaId}/{entidadId}:
+    get:
+      tags:
+      - userSecurity
+      summary: Obtiene el listado de los Gestores de Socio y Franquicia Cesados
+      description: Retorna todos los Gestores
+      operationId: findAllGestoresCesados
+      parameters:
+      - name: perfilId
+        in: path
+        description: 'Identificador de empresa'
+        required: true
+        schema:
+          type: integer 
+      - name: empresaId
+        in: path
+        description: 'Identificador de empresa'
+        required: true
+        schema:
+          type: integer 
+      - name: entidadId
+        in: path
+        description: 'Identificador de entidad'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/UserSecurity'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /security-master/modules:
+    get:
+      tags:
+      - security master
+      summary: Obtiene los modulos configurados
+      description: Retorna todos los modulos configurados
+      operationId: findAllModules
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Module'
+        400:
+          description: Valor de parametros no válidos.
+          
+          
+  
+  /sales-hierarchy-master/company:
+    get:
+      tags:
+      - sales-hierarchy
+      summary: Obtiene todas las empresas registradas
+      description: Retorna todas las empresas registradas
+      operationId: findAllCompanys
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Company'
+        400:
+          description: Valor de parametros no válidos.
+
+  /sales-hierarchy-master/franchise:
+    get:
+      tags:
+        - sales-hierarchy
+      summary: Obtiene todas las franquicias registradas
+      description: Retorna todas las franquicias registradas
+      operationId: findAllFranchises
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Franchise'
+        400:
+          description: Valor de parametros no válidos.
+
+  /sales-hierarchy-master/company/{id}/entities:
+    get:
+      tags:
+      - sales-hierarchy
+      summary: Obtiene todas las entidades por empresa
+      description: Retorna todas las entidades por empresa
+      operationId: findEntitiesByCompany
+      parameters: 
+      - name: id
+        in: path
+        description: 'ID de empresa'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Entity'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /sales-hierarchy-master/entity/{id}/pointSale:
+    get:
+      tags:
+      - sales-hierarchy
+      summary: Obtiene todos los puntos de venta por entidad
+      description: Retorna todos los puntos de venta por entidad
+      operationId: findPointSalebByEntity
+      parameters: 
+      - name: id
+        in: path
+        description: 'ID de entidad'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/PointSale'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /sales-hierarchy-master/user:
+    get:
+      tags:
+      - sales-hierarchy
+      summary: Obtiene la jerarquia de ventas del usuario logueado
+      description: Retorna la jerarquia de ventas del usuario logueado
+      operationId: getUserSalesHierarchy
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CompanyHierarchy'
+        400:
+          description: Valor de parametros no válidos.
+
+  /sales-hierarchy-master/entidad-user:
+    get:
+      tags:
+      - sales-hierarchy
+      summary: Obtiene la jerarquia de ventas del usuario logueado
+      description: Retorna la jerarquia de ventas del usuario logueado
+      operationId: getUserSalesHierarchyByEntidad
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CompanyHierarchy'
+        400:
+          description: Valor de parametros no válidos.          
+          
+  /documentType:
+    get:
+      tags:
+      - documentType
+      summary: Obtiene el litado de los documentos
+      description: Retorna todos los documentos
+      operationId: findAllTipDocument
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/DocumentType'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /motivosPc:
+    get:
+      tags:
+      - motivosPc
+      summary: Obtiene el litado de los motivos  de Pcs
+      description: Retorna todas las motivos
+      operationId: findAllMotivosPc
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/MotivosPc'
+        400:
+          description: Valor de parametros no válidos. 
+
+  /marcasPc:
+    get:
+      tags:
+      - marcasPc
+      summary: Obtiene el litado de las marcas de Pcs
+      description: Retorna todas las marcas
+      operationId: findAllMarcasPc
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/MarcasPc'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /tipoActivosPc:
+    get:
+      tags:
+      - tipoActivosPc
+      summary: Obtiene el litado de las tipos activos de Pcs
+      description: Retorna todas las tipos activos
+      operationId: findAlltipoActivoPc
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/TipoActivosPc'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /employee:
+    post:
+      tags: 
+      - userSecurity
+      summary: Obtiene los trabajores asociados a un rol funcional
+      description: Retorna los trabajores asociados a un rol funcional
+      operationId: findAllEmployee
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/CustomPageable'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.
+          
+          
+  /employee/{employeeId}:
+    get:
+      tags: 
+      - employee
+      summary: Obtiene los trabajores asociados a un rol funcional
+      description: Retorna los trabajores asociados a un rol funcional
+      operationId: getEmployeeApplication
+      parameters: 
+      - name: employeeId
+        in: path
+        description: 'ID de entidad'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Employee'
+        400:
+          description: Valor de parametros no válidos.
+  /ticket/listTypeTickets:
+    get:
+      tags:
+      - ticket
+      summary: Obtiene los tipos de tickets que existen
+      description: Retorna los tipos de tickets existentes en el sistema
+      operationId: findAllTypeTickets
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/TicketType'
+        400:
+          description: Valor de parametros no válidos.        
+  /employee/documentType/{tipoDocumentoId}/documentNumber/{numDocumento}/history:
+    get:
+      tags: 
+      - ticket
+      summary: Obtiene el historial de ticket por empleado
+      description: Retorna historial de ticket por empleado
+      operationId: findTicketRequestClosedByEmployee
+      parameters: 
+        - name: tipoDocumentoId
+          in: path
+          description: tipo de documento
+          required: true
+          schema:
+            type: integer
+            format: int32
+            default: 4
+        - name: numDocumento
+          in: path
+          description: número de documento
+          required: true
+          schema:
+            type: string
+            default: 46675898
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountHistory'
+        400:
+          description: Valor de parametros no válidos. 
+          
+  /functional-role/authorized/entity/{entidadId}:
+    get:
+      tags:
+      - profile
+      summary: Obtiene todos los roles funcionales SIAM autorizados
+      description: Retorna todos los roles funcionales SIAM autorizados
+      operationId: findAuthorizedFunctionalRoles
+      parameters: 
+      - name: entidadId
+        in: path
+        description: 'ID de entidad'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/FunctionalRole'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /functional-role/segregation/authorized:
+    get:
+      tags:
+        - profile
+      summary: Obtiene todos los roles funcionales de segregacion SIAM autorizados
+      description: Retorna todos los roles funcionales de segregacion SIAM autorizados
+      operationId: findAuthorizedSegregationFunctionalRoles
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/FunctionalRole'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /ticket/applicant:
+    get:
+      tags: 
+      - ticket
+      summary: Obtiene los Ticket del solicitante logueado
+      description: Retorna los Ticket del solicitante logueado
+      operationId: findAllTicketsForRequester
+      parameters: 
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: query
+          in: query
+          description: consulta de búsqueda
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: active
+          in: query
+          description: columna/campo para el ordenamiento asc o desc
+          required: false
+          schema:
+            $ref: '#/components/schemas/TicketPageableActive'
+        - name: direction
+          in: query
+          description: ordenamiento descendente o ascendente
+          required: false
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.    
+          
+  /ticket-pc/applicant:
+    get:
+      tags:
+        - ticket
+      summary: Obtiene los Ticket del solicitante logueado
+      description: Retorna los Ticket del solicitante logueado
+      operationId: findAllTicketsPcForRequester
+      parameters:
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: query
+          in: query
+          description: consulta de búsqueda
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: active
+          in: query
+          description: columna/campo para el ordenamiento asc o desc
+          required: false
+          schema:
+            $ref: '#/components/schemas/TicketPcPageableActive'
+        - name: direction
+          in: query
+          description: ordenamiento descendente o ascendente
+          required: false
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.
+
+  /ticket-pc/high:
+    post:
+      tags: 
+      - ticket-pc
+      summary: crear ticket alta de Pcs
+      description: crear ticket alta de Pcs
+      operationId: createhighTicketPc
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TicketPc'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPc'
+        405:
+          description: Entrada invalida
+
+  /ticket-pc/modification:
+    post:
+      tags:
+        - ticket-pc
+      summary: crear ticket modificacion de Pcs
+      description: crear ticket modificacion de Pcs
+      operationId: createModificationTicketPc
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TicketPc'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPc'
+        405:
+          description: Entrada invalida
+
+  /ticket-pc/approver:
+    get:
+      tags: 
+      - ticket-pc
+      summary: Obtiene los Ticket del solicitante logueado
+      description: Retorna los Ticket del solicitante logueado
+      operationId: findAllTicketsPcForApprover
+      parameters: 
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: query
+          in: query
+          description: consulta de búsqueda
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: active
+          in: query
+          description: columna/campo para el ordenamiento asc o desc
+          required: false
+          schema:
+            $ref: '#/components/schemas/TicketPcPageableActive'
+        - name: direction
+          in: query
+          description: ordenamiento descendente o ascendente
+          required: false
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.           
+
+  /ticket-pc/{ticketId}:
+    get:
+      tags:
+      - ticket-pc
+      summary: Obtener ticket Pc por ID.
+      description: Retorna ticket Pc por ID.
+      operationId: getTicketPcById
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPc'
+        400:
+          description: Se proporcionó un ID de ticket no válido
+        404:
+          description: Ticket no encontrado
+
+  /ticket-pc/{ticketId}/approve:
+    post:
+      tags: 
+      - ticket-pc
+      summary: crear ticket alta de Pc
+      description: crear ticket alta de Pc
+      operationId: approveTicketPc
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPc'
+        405:
+          description: Entrada invalida
+  /ticket/solicitudSegregacion:
+    get:
+      tags: 
+      - ticket
+      summary: Obtiene los Ticket del solicitante logueado
+      description: Retorna los Ticket del solicitante logueado
+      operationId: findAllTicketsForRequesterSegregacion
+      parameters: 
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: query
+          in: query
+          description: consulta de búsqueda
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: active
+          in: query
+          description: columna/campo para el ordenamiento asc o desc
+          required: false
+          schema:
+            $ref: '#/components/schemas/TicketPageableActive'
+        - name: direction
+          in: query
+          description: ordenamiento descendente o ascendente
+          required: false
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.    
+          
+          
+          
+  /ticket-pc/{ticketId}/reject:
+    post:
+      tags: 
+      - ticket-pc
+      summary: Rechazar ticket alta de Pc
+      description: rechazar ticket alta de Pc
+      operationId: rejectTicketPc
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TicketComment'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPc'
+        405:
+          description: Entrada invalida
+
+  /ticket-pc/solicitud/{macAddress}:
+    get:
+      tags:
+      - ticket-pc
+      summary: Obtiene el ultimo ticket por Mac Address
+      description: Retorna un ticket según el mac
+      operationId: findPcRequestByMac
+      parameters: 
+      - name: macAddress
+        in: path
+        description: 'Número de Mac'
+        required: true
+        schema:
+          type: string
+          default: 99999999
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPcRequest'
+        400:
+          description: Valor de parametros no válidos.          
+
+
+  /ticket-pc/searchMacAddress/{macAddress}:
+    get:
+      tags:
+      - ticket-pc
+      summary: Verifica si se registro una mac address
+      description: Retorna un mensaje si existe
+      operationId: findPcRequestByMacAddress
+      parameters: 
+      - name: macAddress
+        in: path
+        description: 'Número de Mac'
+        required: true
+        schema:
+          type: string
+          default: 99999999
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPcRequest'
+        400:
+          description: Valor de parametros no válidos.          
+ 
+  /ticket-pc/searchNamePc/{namePc}:
+    get:
+      tags:
+      - ticket-pc
+      summary: Verifica si se registro una name pc
+      description: Retorna un mensaje si existe
+      operationId: findPcRequestByNamePc
+      parameters: 
+      - name: namePc
+        in: path
+        description: 'Name PC'
+        required: true
+        schema:
+          type: string
+          default: 99999999
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPcRequest'
+        400:
+          description: Valor de parametros no válidos.    
+          
+  
+  /activos-pc/{macAddress}:
+    get:
+      tags:
+      - activos-pc
+      summary: Obtiene un activo por Mac Address
+      description: Retorna un activo según el mac
+      operationId: findActivoPcByMac
+      parameters: 
+      - name: macAddress
+        in: path
+        description: 'Número de Mac'
+        required: true
+        schema:
+          type: string
+          default: 99999999
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ActivosPc'
+        400:
+          description: Valor de parametros no válidos.
+
+  /ticket-pc/short:
+    post:
+      tags: 
+      - ticket-pc
+      summary: crear ticket baja de Pc
+      description: crear ticket baja de Pc
+      operationId: createshortTicketPc
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TicketPc'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketPc'
+        405:
+          description: Entrada invalida                     
+                             
+  /ticket/approver:
+    get:
+      tags: 
+      - ticket
+      summary: Obtiene los Ticket del solicitante logueado
+      description: Retorna los Ticket del solicitante logueado
+      operationId: findAllTicketsForApprover
+      parameters: 
+        - name: pageSize
+          in: query
+          description: tamaño de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pageNumber
+          in: query
+          description: número de página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: query
+          in: query
+          description: consulta de búsqueda
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: active
+          in: query
+          description: columna/campo para el ordenamiento asc o desc
+          required: false
+          schema:
+            $ref: '#/components/schemas/TicketPageableActive'
+        - name: direction
+          in: query
+          description: ordenamiento descendente o ascendente
+          required: false
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos.  
+          
+  /ticket/high:
+    post:
+      tags: 
+      - ticket
+      summary: crear ticket alta de trabajador
+      description: crear ticket alta de trabajador
+      operationId: createhighTicket
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        405:
+          description: Entrada invalida 
+          
+          
+  /ticket/modification:
+    post:
+      tags: 
+      - ticket
+      summary: crear ticket modificacion de trabajador
+      description: crear ticket modificacion de trabajador
+      operationId: createModificationTicket
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        405:
+          description: Entrada invalida 
+
+  /ticket/modificationSegregacion:
+    post:
+      tags: 
+      - ticket
+      summary: crear ticket modificacion de trabajador
+      description: crear ticket modificacion de trabajador
+      operationId: createModificationTicketSegregacion
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        405:
+          description: Entrada invalida           
+          
+  /ticket/short:
+    post:
+      tags: 
+      - ticket
+      summary: crear ticket baja de trabajador
+      description: crear ticket baja de trabajador
+      operationId: createshortTicket
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        405:
+          description: Entrada invalida 
+          
+  /ticket/{ticketId}:
+    get:
+      tags:
+      - ticket
+      summary: Obtener ticket por ID.
+      description: Retorna ticket por ID.
+      operationId: getTicketById
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        400:
+          description: Se proporcionó un ID de ticket no válido
+        404:
+          description: Ticket no encontrado
+                    
+  /ticket-request/{solicitudId}/process:
+    get:
+      tags:
+      - ticket
+      summary: Obtener resumen de proceso de solicitud por ID.
+      description: Retorna resumen de proceso de solicitud por ID.
+      operationId: getTicketRequestProcessById
+      parameters: 
+      - name: solicitudId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/TicketRequestProcess'
+        400:
+          description: Se proporcionó un ID de solicitud no válido
+        404:
+          description: Solicitud no encontrado
+          
+  /ticket-request/executionStatus:
+    get:
+      tags:
+      - ticket
+      summary: Obtener estados de ejecución de solicitudes
+      description: Retorna estados de ejecución de solicitudes
+      operationId: getRequestExecutionStatus
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/TicketRequestExecutionStatus'
+        400:
+          description: Se proporcionó datos incorrectos
+        404:
+          description: Solicitud no encontrado
+
+  /ticket-request/statusReport:
+    get:
+      tags:
+      - ticket
+      summary: Obtener solicitudes por estado de ejecución
+      description: Retorna solicitudes por estado de ejecución
+      operationId: getReportRequestExecutionStatus
+      parameters: 
+      - name: estadoSolicitudId
+        in: query
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      - name: fechaInicial
+        in: query
+        description: '20/09/2021'
+        required: true
+        schema:
+          type: string
+      - name: fechaFinal
+        in: query
+        description: '20/09/2021'
+        required: true
+        schema:
+          type: string
+      
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: object
+                format: base64
+
+
+  /ticket/{ticketId}/approve:
+    post:
+      tags: 
+      - ticket
+      summary: crear ticket alta de trabajador
+      description: crear ticket alta de trabajador
+      operationId: approveTicket
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        405:
+          description: Entrada invalida
+          
+  /ticket/{ticketId}/reject:
+    post:
+      tags: 
+      - ticket
+      summary: crear ticket alta de trabajador
+      description: crear ticket alta de trabajador
+      operationId: rejectTicket
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TicketComment'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        405:
+          description: Entrada invalida
+          
+  /ticket/{ticketId}/request/{solicitudId}/approve:
+    post:
+      tags: 
+      - ticket
+      summary: aprobar solicitud alta de trabajador
+      description: aprobar solicitud alta de trabajador
+      operationId: approveTicketRequest
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      - name: solicitudId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketRequest'
+        405:
+          description: Entrada invalida
+          
+  /ticket/{ticketId}/request/{solicitudId}:
+    put:
+      tags: 
+      - ticket
+      summary: editar solicitud alta de trabajador
+      description: editar solicitud alta de trabajador
+      operationId: editTicketRequest
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      - name: solicitudId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TicketRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketRequest'
+        405:
+          description: Entrada invalida
+          
+  /ticket/{ticketId}/request/{solicitudId}/reject:
+    post:
+      tags: 
+      - ticket
+      summary: rechazar solicitud alta de trabajador
+      description: rechazar solicitud alta de trabajador
+      operationId: rejectTicketRequest
+      parameters: 
+      - name: ticketId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      - name: solicitudId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TicketRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TicketRequest'
+        405:
+          description: Entrada invalida
+
+  /ticket/high/template:
+    get:
+      summary: Desarga platilla para alta masiva
+      description: Desarga platilla para alta masiva
+      operationId: downloadHighTemplate
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: object
+                format: base64
+                      
+        400:
+          description: Valor de parametros no válidos.
+          
+  /ticket/modification/template:
+    get:
+      summary: Desarga platilla para alta masiva
+      description: Desarga platilla para alta masiva
+      operationId: downloadModificationTemplate
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: object
+                format: base64
+                      
+        400:
+          description: Valor de parametros no válidos.
+          
+  /ticket/short/template:
+    get:
+      summary: Desarga platilla para alta masiva
+      description: Desarga platilla para alta masiva
+      operationId: downloadShortTemplate
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: object
+                format: base64
+                      
+        400:
+          description: Valor de parametros no válidos.
+  /requestStatus:
+    get:
+      tags:
+      - requestStatus
+      summary: Obtiene el listado de estados de solicitudes
+      description: Obtiene el listado de estados de solicitudes
+      operationId: findAllRequestStatus
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/RequestStatus'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /request:
+    post:
+      tags: 
+      - request
+      summary: insertar nueva solicitud
+      description: insertar nueva solicitud
+      operationId: addRequest
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida
+    put:
+      tags: 
+      - request
+      summary: actualizar solicitud
+      description: actualizar solicitud
+      operationId: updateRequest
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida    
+  /request/{requestId}:
+    get:
+      tags: 
+      - request
+      summary: buscar solicitud por id
+      description: buscar solicitud por id
+      operationId: findRequestById
+      parameters: 
+      - name: requestId
+        in: path
+        description: 'Id de solicitud'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida
+    delete:
+      tags: 
+      - request
+      summary: eliminar la solicitud logicamente
+      description: eliminar la solicitud logicamente
+      operationId: deteleRequest
+      parameters: 
+      - name: requestId
+        in: path
+        description: 'Id de solicitud'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: boolean
+        405:
+          description: Entrada invalida
+  /request/{requestId}/adjunto:    
+    delete:
+      tags: 
+      - request
+      summary: eliminar el archivo adjunto de la solicitud
+      description: eliminar el archivo adjunto de la solicitud
+      operationId: deteleFileByRequestId
+      parameters: 
+      - name: requestId
+        in: path
+        description: 'Id de solicitud'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: boolean
+        405:
+          description: Entrada invalida
+          
+  /request/aprobarOrRechazar:
+    put:
+      tags: 
+      - request
+      summary: aprobar/rechazar la solicitud
+      description: aprobar/rechazar la solicitud
+      operationId: aprobarOrRechazarRequest      
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida
+  
+  /request/perfilar:
+    put:
+      tags: 
+      - request
+      summary: Configurar los perfiles para la solicitud
+      description:  Configurar los perfiles para la solicitud
+      operationId: perfilarRequest      
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida
+          
+  /request/orderByDni:
+    get:
+      tags: 
+      - request
+      summary: Ordenar por DNI
+      description:  Ordenar por DNI
+      operationId: orderByDniRequest
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida
+          
+  /request/orderByLastName:
+    get:
+      tags: 
+      - request
+      summary: Ordenar por apelllido paterno
+      description:  Ordenar por apelllido paterno
+      operationId: orderByLastNameRequest
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida
+  
+  /request/list:
+    get:
+      tags: 
+      - request
+      summary: Listar desordenadamente
+      description:  Listar desordenadamente
+      operationId: listRequest
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida 
+          
+  /request/{centroId}:
+    get:
+      tags: 
+      - request
+      summary: buscar comportamiento por centroId
+      description: buscar comportamiento por centroId
+      operationId: findRequestByCenterId
+      parameters: 
+      - name: centroId
+        in: path
+        description: 'Id de centro'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida
+          
+  /request/{firmaId}:
+    get:
+      tags: 
+      - request
+      summary: buscar comportamiento por firmaId
+      description: buscar comportamiento por firmaId
+      operationId: findRequestBySignaturerId
+      parameters: 
+      - name: firmaId
+        in: path
+        description: 'Id de firma'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        405:
+          description: Entrada invalida         
+  
+          
+  /request/all:
+    post:
+      tags: 
+      - request
+      summary: Listar paginado las solicitudes de roles funcionales
+      description: Listar paginado las solicitudes de roles funcionales
+      operationId: findAllPageableRequest
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CustomPageable'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos
+          
+  /person/autocomplete:
+    get:
+      tags: 
+      - person
+      summary: buscar coincidencia por nombres y dni
+      description: buscar coincidencia por nombres y dni
+      operationId: findByNombresContainsOrNumDocumentoContains
+      parameters: 
+      - name: datos
+        in: query
+        description: 'Nombre o DNI de la persona'
+        required: true
+        schema:
+          type: string
+      - name: canalId
+        in: query
+        description: 'Id de canal'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/Person'
+        405:
+          description: Entrada invalida
+  /person/{personaId}:
+    get:
+      tags: 
+      - person
+      summary: buscar persona por id
+      description: buscar persona por id
+      operationId: findById
+      parameters: 
+      - name: personaId
+        in: path
+        description: 'Id de persona'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Person'
+        405:
+          description: Entrada invalida
+  
+  /responsable:
+    post:
+      tags: 
+      - responsable
+      summary: insertar un nuevo responsable
+      description: insertar un nuevo responsable
+      operationId: addResponsable
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ResponsableRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                $ref: '#/components/schemas/Person'
+        405:
+          description: Entrada invalida    
+  /responsable/all:
+    post:
+      tags: 
+      - responsable
+      summary: Listar paginado los responsables
+      description: Listar paginado los responsables
+      operationId: findAllPageableResponsables
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CustomPageable'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos
+          
+  /responsable/{personaId}:
+    put:
+      tags: 
+      - responsable
+      summary: editar un responsable existente
+      description: editar un responsable existente
+      operationId: updateResponsable
+      parameters: 
+        - name: personaId
+          in: path
+          description: Id de la persona a editar
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ResponsableRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                $ref: '#/components/schemas/Person'
+        405:
+          description: Entrada invalida
+    delete:
+      tags: 
+      - responsable
+      summary: eliminar un responsable existente
+      description: eliminar un responsable existente
+      operationId: deleteResponsable
+      parameters: 
+        - name: personaId
+          in: path
+          description: Id de la persona a eliminar
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: boolean
+        405:
+          description: Entrada invalida
+  /responsable/{personaId}/activate:
+    put:
+      tags: 
+      - responsable
+      summary: Activa un responsable
+      description: Cambia el estado de un responsable a activo
+      operationId: activateResponsable
+      parameters: 
+        - name: personaId
+          in: path
+          description: Id de la persona a activar
+          required: true
+          schema:
+            type: integer
+            format: int32      
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: boolean
+        405:
+          description: Entrada invalida
+  /amdocsChannel:
+    get:
+      tags:
+      - amdocsChannel
+      summary: Listar todos los canales Amdocs
+      description: Listar todos los canales Amdocs
+      operationId: findAllAmdocsChannel  
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/AmdocsChannel'
+        400:
+          description: Valor de parametros no válidos.
+  /commercialChannel/amdocsChannel/{amdocsChannelId}:
+    get:
+      tags:
+      - commercialChannel
+      summary: Listar todos los canales comerciales por el id del canal Amdocs
+      description: Listar todos los canales comerciales por el id del canal Amdocs
+      operationId: findAllCommercialChannelByCanalAmdocsId  
+      parameters: 
+      - name: amdocsChannelId
+        in: path
+        description: 'Id del canal Amdocs'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/CommercialChannel'
+        400:
+          description: Valor de parametros no válidos.
+  /channel/commercialChannel/{commercialChannelId}:
+    get:
+      tags:
+      - channel
+      summary: Listar todos los canales por el id del canal comercial
+      description: Listar todos los canales por el id del canal comercial
+      operationId: findAllChannelByCommercialChannelId  
+      parameters: 
+      - name: commercialChannelId
+        in: path
+        description: 'Id del canal comercial'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/Channel'
+        400:
+          description: Valor de parametros no válidos.
+          
+  /profileFunctional/{aplicacionId}:
+    get:
+      tags:
+      - profileFunctional
+      summary: Listar todas los perfiles por aplicacion
+      description: Listar todas los perfiles por aplicacion
+      operationId: findAllProfileFunctionalByAplicacionId  
+      parameters: 
+      - name: aplicacionId
+        in: path
+        description: 'Id de aplicacion'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/ProfileFunctional'
+        400:
+          description: Valor de parametros no válidos.
+  /profileFunctional/application/{aplicacionId}/canal/{canalId}:
+    get:
+      tags:
+      - profileFunctional
+      summary: Listar todas los perfiles por aplicacion y segun el canal asociado
+      description: Listar todas los perfiles por aplicacion y segun el canal asociado
+      operationId: findAllProfileFunctionalByAplicacionAndCanal  
+      parameters: 
+      - name: aplicacionId
+        in: path
+        description: 'Id de aplicacion'
+        required: true
+        schema:
+          type: integer
+      - name: canalId
+        in: path
+        description: 'Id de canal'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/ProfileFunctional'
+        400:
+          description: Valor de parametros no válidos.
+  /requestType:
+      get:
+        tags:
+        - requestType
+        summary: Obtiene el listado de tipos de solicitudes
+        description: Retorna todos los tipos de solicitudes
+        operationId: findAllRequestType
+        responses:
+          200:
+            description: successful operation
+            content:
+              'application/json':
+                 schema:
+                  type: "array"
+                  items:
+                      $ref: '#/components/schemas/RequestType'
+          400:
+            description: Valor de parametros no válidos.
+            
+  /functional-role/channel/autocomplete:
+    get:
+      tags:
+        - functionalRole
+      summary: Obtener los roles funcionales
+      description: Obtiene los roles funcional que contenga nombreRol y que pertenezcan al canalId especifico, solo retorna 10 como maximo
+      operationId: findFunctionalRolesByNombreAndCanalId
+      parameters: 
+      - name: nombreRol
+        in: query
+        description: 'Nombre del rol, no es necesario sea exacto'
+        required: true
+        schema:
+          type: string
+      - name: canalId
+        in: query
+        description: 'Id de canal'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/FunctionalRole'
+        400:
+          description: Valor de parametros no válidos.
+  /functional-role/{functionalRolId}/{validaTicketYRequest}/validate:
+    get:
+      tags:
+      - functionalRole
+      summary: Valida si el rol funcional esta siendo utilizado por un usuario, solicitud o ticket.
+      description: Valida si el rol funcional esta siendo utilizado por un usuario, solicitud o ticket.
+      operationId: validateIfFunctionalRoleIsBusy
+      parameters: 
+      - name: functionalRolId
+        in: path
+        description: 'Id del rol funcional'
+        required: true
+        schema:
+          type: integer
+      - name: validaTicketYRequest
+        in: path
+        description: '1 => si valida en solicitudes y tickets, 0 => no valida en tickets ni solicitudes'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                  $ref: '#/components/schemas/ValidateFunctionalRol'
+        400:
+          description: Valor de parametros no válidos.
+   
+  /functional-role/{functionalRoleId}/downloadFile/activeUsers:
+    get:
+      summary: Exportar usuarios activos en el rol funcional
+      description: Exportar usuarios activos en el rol funcional
+      operationId: downloadFileActiveUsersFunctionalRole
+      parameters: 
+      - name: functionalRoleId
+        in: path
+        description: 'Id de rol funcional'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: object
+                format: base64
+                
+  /person/documentType/{tipoDocumentoId}/documentNumber/{documentNumber}:
+    get:
+      tags:
+      - person
+      summary: Obtiene a persona según tipo y numero de documento para registrar
+      description: Retorna persona según tipo y numero de documento para registrar
+      operationId: findPersonByDocumentToRegister
+      parameters: 
+      - name: tipoDocumentoId
+        in: path
+        description: 'ID tipo de documento'
+        required: true
+        schema:
+          type: integer
+      - name: documentNumber
+        in: path
+        description: 'Número de documento'
+        required: true
+        schema:
+          type: string
+          default: 99999999
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Person'
+        400:
+          description: Valor de parametros no válidos.
+
+  /profile-parameter/all:
+    get:
+      tags:
+        - profileParameter
+      summary: Obtener el listado de parametros de perfiles con etiquetado
+      description: Obtener el listado de parametros de perfiles con etiquetado
+      operationId: findAllProfilerParameterEtiquetado
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/ProfileParameterCustom'
+        400:
+          description: Valor de parametros no válidos.
+
+  /profile-parameter/perfil/{id}:
+    get:
+      tags:
+        - profileParameter
+      summary: Obtener el listado de parametros de perfiles por perfil id
+      description: Obtener el listado de parametros de perfiles por perfil id
+      operationId: findAllProfileParamterByPerfilId
+      parameters: 
+        - name: id
+          in: path
+          description: 'ID del perfil'
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/ProfileParameterCustom'
+        400:
+          description: Valor de parametros no válidos.
+    put:
+      tags: 
+      - profileParameter
+      summary: editar perfiles parametrizados
+      description: editar perfiles parametrizados
+      operationId: editarPerfilesParametrizados
+      parameters: 
+      - name: id
+        in: path
+        description: 'perfil id'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProfileParameterCustom'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: boolean
+        405:
+          description: Entrada invalida
+  /request-retry:
+    post:
+      tags:
+      - requestRetry
+      summary: Obtener carga inical de reintento de solicitudes fallidas
+      description: Retorna carga inical de reintento de solicitudes fallidas
+      operationId: getInitialLoadRetry
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/CustomPageable'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/InitialLoadRetry'
+        400:
+          description: Se proporciono datos invalidos
+        404:
+          description: data inicial no encontrada
+          
+  /request-retry/{solicitudId}/process:
+    get:
+      tags:
+      - ticket
+      summary: Obtener resumen de proceso de solicitud por ID.
+      description: Retorna resumen de proceso de solicitud por ID.
+      operationId: getTicketRequestRetryProcessById
+      parameters: 
+      - name: solicitudId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/TicketRequestProcess'
+        400:
+          description: Se proporcionó un ID de solicitud no válido
+        404:
+          description: Solicitud no encontrado
+          
+  /request-retry/begin/{solicitudId}:
+    post:
+      tags:
+      - requestRetry
+      summary: Obtener las solicitudes fallidas
+      description: Retorna las solicitudes fallidas
+      operationId: startRetry
+      parameters: 
+      - name: solicitudId
+        in: path
+        description: 'ID solicitud'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: boolean
+        405:
+          description: Entrada invalida
+
+  /request-retry/begin/all:
+    post:
+      tags:
+      - requestRetry
+      summary: Obtener las solicitudes fallidas
+      description: Retorna las solicitudes fallidas
+      operationId: startRetryAll
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/EntityAttribute'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: boolean
+        405:
+          description: Entrada invalida
+          
+  /point-sale/all:
+    post:
+      tags: 
+      - point-sale
+      summary: Listar paginado los puntos de ventas
+      description: Listar paginado los puntos de ventas, ademas permite filtrar por codigo y nombre
+      operationId: findAllPageablePointSale
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CustomPageable'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos
+          
+  /point-sale/{id}/grupoad:
+    put:
+      tags: 
+      - point-sale
+      summary: Actualizar el grupo AD (certificado) del punto de venta
+      description: Actualizar el grupo AD (certificado) del punto de venta
+      operationId: updateGrupoAd
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+          content:
+            'application/json':
+               schema:
+                  $ref: '#/components/schemas/PointSale'
+          
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: ID invalido
+        405:
+          description:  Valor de parametros no válidos.
+          
+  /point-sale/{id}/codigoagencia:
+    put:
+      tags: 
+      - point-sale
+      summary: Actualizar el codigo de agencia del punto de venta
+      description: Actualizar el codigo de agencia del punto de venta
+      operationId: updateCodigoAgencia
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+          content:
+            'application/json':
+               schema:
+                  $ref: '#/components/schemas/PointSale'
+          
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: ID invalido
+        405:
+          description:  Valor de parametros no válidos.
+
+  /point-sale/{id}/codigofranquicia:
+    put:
+      tags:
+        - point-sale
+      summary: Actualizar el codigo de franquicia del punto de venta
+      description: Actualizar el codigo de franquicia del punto de venta
+      operationId: updateCodigoFranquicia
+      parameters:
+        - name: id
+          in: path
+          description: '1'
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PointSale'
+
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: ID invalido
+        405:
+          description: Valor de parametros no válidos.
+
+  /point-sale/template:
+    get:
+        summary: Desarga platilla para carga masiva
+        description: Desarga platilla para carga masiva
+        operationId: downloadTemplate
+        responses:
+          200:
+            description: successful operation
+            content:
+              application/vnd.ms-excel:
+                schema:
+                  type: object
+                  format: base64
+
+          400:
+            description: Valor de parametros no válidos.
+  /point-sale/validar/certificado/{certificado}:
+    get:
+      tags:
+      - point-sale
+      summary: Validar si el certificado existe en el AD
+      description:  Validar si el certificado existe en el AD
+      operationId: validarCertificado
+      parameters: 
+      - name: certificado
+        in: path
+        description: 'Certificado o Grupo AD'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: boolean
+        405:
+          description: Entrada invalida
+  
+  /point-sale/{id}/codigoatis:
+    put:
+      tags: 
+      - point-sale
+      summary: Actualizar el codigo Atis del punto de venta
+      description: Actualizar el codigo Atis del punto de venta
+      operationId: updateCodigoAtis
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+          content:
+            'application/json':
+               schema:
+                  $ref: '#/components/schemas/PointSale'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: ID invalido
+        405:
+          description:  Valor de parametros no válidos.
+          
+  /channel/all:
+    post:
+      tags: 
+      - channel
+      summary: Listar paginado los canales
+      description: Listar paginado los canales
+      operationId: findAllPageableChannel
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CustomPageable'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                $ref: '#/components/schemas/Pageable'
+        400:
+          description: Valor de parametros no válidos
+          
+  /commercialChannel/codigo/{codigo}:
+    get:
+      tags:
+      - commercialChannel
+      summary: Obtener canal comercial por codigo
+      description: Obtener canal comercial por codigo
+      operationId: getCommercialChannelByCodigo
+      parameters: 
+      - name: codigo
+        in: path
+        description: 'AF'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CommercialChannel'
+        400:
+          description: Se proporcionó un ID de aplicación no válido
+        404:
+          description: Canal Comercial no encontrado
+          
+  /generic-channel/autocomplete:
+    get:
+      tags: 
+      - generic-channel
+      summary: buscar coincidencia por nombre de canal generico
+      description: buscar coincidencia por nombre de canal generico
+      operationId: findByNombreGenericChannelAutocomplete
+      parameters: 
+      - name: nombre
+        in: query
+        description: 'Nombre'
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                    $ref: '#/components/schemas/GenericChannel'
+        405:
+          description: Entrada invalida
+          
+  /channel:
+    post:
+      tags: 
+      - channel
+      summary: Guardar canal
+      description: Guardar canal
+      operationId: saveChannel
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ChannelCustom'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ChannelCustom'
+        400:
+          description: Valor de parametros no válidos.
+  /channel/{id}:
+    put:
+      tags: 
+      - channel
+      summary: Actualizar el canal
+      description: Actualizar el canal
+      operationId: updateChannel
+      parameters: 
+      - name: id
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+          content:
+            'application/json':
+               schema:
+                  $ref: '#/components/schemas/ChannelCustom'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ChannelCustom'
+        405:
+          description:  Valor de parametros no válidos.
+    delete:
+      tags: 
+      - channel
+      summary: eliminar canal por ID
+      description: eliminar canal por ID
+      operationId: deleteChannel
+      parameters: 
+      - name: id
+        in: path
+        description: 'Identificador de canal'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: ID invalido
+        404:
+          description: Perfil no encontrado
+  /setting/functionalRole/{rolId}/detail:
+    get:
+      tags: 
+      - setting
+      summary: Obtiene todos los roles funcionales
+      description: Retorna todos los roles funcionales
+      operationId: findConfigFunctionalRoleDetail
+      parameters: 
+      - name: rolId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/DetailConfigFunctionalRole'
+        400:
+          description: Valor de parametros no válidos.
+    post:
+      tags: 
+      - setting
+      summary: guarda/actualiza la configuracion de los aplicativos por rol funcional
+      description: guarda/actualiza la configuracion de los aplicativos por rol funcional
+      operationId: saveConfigFunctionalRoleDetail
+      requestBody:
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/DetailConfigFunctionalRole'
+      parameters: 
+      - name: rolId
+        in: path
+        description: '1'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+               schema:
+                type: boolean
+        400:
+          description: Valor de parametros no válidos.
+  
+  /setting/functionalRole:
+    post:
+      tags: 
+      - setting
+      summary: Obtiene todos los roles funcionales
+      description: Retorna todos los roles funcionales
+      operationId: findAllConfigFunctionalRole
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/CustomPageable'
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ConfigInitialFunctionalRole'
+        400:
+          description: Valor de parametros no válidos.
+  /commercialChannel/all:
+    get:
+      tags:
+      - commercialChannel
+      summary: Obtiene todos los canales comerciales
+      description: Obtiene todos los canales comerciales
+      operationId: findAllCommercialChannel   
+      responses:
+        200:
+          description: successful operation
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/CommercialChannel'
+security:
+  - bearerAuth: []   
+  
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+      
+  schemas:
+    Responsable:
+      type: object
+      discriminator:
+        propertyName: responsableType
+      properties:
+        responsableId:
+          type: integer
+          format: int32
+        cip:
+          type: string
+          maxLength: 80
+        cargo:
+          type: string
+          maxLength: 80
+        direccion:
+          type: string
+          maxLength: 80
+        gerencia:
+          type: string
+          maxLength: 80
+        canal:
+          $ref: '#/components/schemas/Channel'
+        ticketRemedy:
+          type: string
+          maxLength: 20
+        tipo:
+          type: string
+          maxLength: 20
+        sustento:
+          type: string
+          maxLength: 200 
+    Application:
+      type: object
+      discriminator:
+        propertyName: aplicacionType
+      properties:
+        aplicacionId:
+          type: integer
+          format: int32
+        nombreAplicacion:
+          type: string
+          example: Teller
+        tipoConexion:
+          type: string
+          description: tipo de conexión de aplicación en el sistema SIAM
+          enum: 
+          - automatica
+          - manual
+        activo:
+          type: string
+          description: estado de la aplicación en el sistema SIAM
+        codigo:
+          type: string
+          description: Código de la aplicación
+    
+    ApplicationAndPolicyPassword:
+      type: object
+      discriminator:
+        propertyName: applicationAndPolicyPasswordType
+      properties:
+        aplicacionId:
+          type: integer
+          format: int32
+        nombreAplicacion:
+          type: string
+          example: Teller
+        codigo:
+          type: string
+          description: Código de la aplicación
+        policyPassword:
+          $ref: '#/components/schemas/PolicyPasswordApplication'
+
+    PolicyPasswordApplication:
+      type: object
+      discriminator:
+        propertyName: policyPasswordApplicationType
+      properties:
+        politicaContrasenaId:
+          type: integer
+          format: int32
+        nombrePolitica:
+          type: string
+        iniciarMayuscula:
+          type: boolean
+        soloMinuscula:
+          type: boolean
+        caracteresMin:
+          type: integer
+        caracteresMax:
+          type: integer
+        contieneMinuscula:
+          type: boolean
+        contieneMayuscula:
+          type: boolean
+        contieneNumero:
+          type: boolean
+        contieneCaracterEspecial:
+          type: boolean
+        mapaCaracteres:
+          type: string
+        nombreUsuario:
+          type: boolean
+        nombreUsuarioInverso:
+          type: boolean
+        nombrePersona:
+          type: boolean
+        apellidoPersona:
+          type: boolean
+        numeroDocumento:
+          type: boolean  
+
+    Profile:
+      type: object
+      discriminator:
+        propertyName: profileType
+      properties:
+        perfilId:
+          type: integer
+          format: int32
+        nombrePerfil:
+          type: string
+          example: Reportes
+          maxLength: 80
+        ventanaAcceso:
+            type: string
+        state:
+          type: boolean
+        modulos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Module'
+      required:
+      - nombrePerfil
+
+    Module:
+      type: object
+      discriminator:
+        propertyName: moduleType
+      properties:
+        moduloId:
+          type: integer
+          format: int32
+        nombreModulo:
+          type: string
+          example: Reportes
+          maxLength: 80
+        claveModulo:
+          type: string
+          example: REPORT
+          maxLength: 100
+        acciones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+
+    Action:
+      type: object
+      discriminator:
+        propertyName: actionType
+      properties:
+        rolId:
+          type: integer
+          format: int32
+        codigo:
+          type: string
+          example: REPORTE_SHOW
+          maxLength: 50
+        evento:
+          type: string
+          example: Visualizar Módulo de Reportes
+          maxLength: 80
+    
+    Pageable: 
+      description: parámetros mínimos de consulta paginable
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        data:
+          type: array
+          items:
+            type: object
+    Direction: 
+      description: dirección de la paginación asc o desc
+      type: string
+      enum: 
+      - asc
+      - desc
+
+    ProfilePageableActive: 
+      description: columna activa para paginación
+      type: string
+      enum: 
+      - nombrePerfil
+      - perfilId
+      - state
+      
+    UserSecurity:
+      type: object
+      discriminator:
+        propertyName: userSecurityType
+      properties:
+        usuarioId:
+          type: integer
+        nombre:
+          type: string
+          maxLength: 40
+        bloqueado:
+          type: boolean
+        perfilId:
+          type: integer
+        persona:
+          $ref: '#/components/schemas/Person'
+        usuarioGrupo:
+          $ref: '#/components/schemas/UsuarioGrupo'            
+        puntoVenta:
+          $ref: '#/components/schemas/PointSale'
+        bloqueo:
+          $ref: '#/components/schemas/Lock'
+        canalesComerciales:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommercialChannel'
+        canalesComercialesId:
+          type: array
+          items:
+            type: integer
+      required: 
+        - nombre
+        - perfilId
+        - persona
+        - puntoVenta
+
+    ChangeUserProfile:
+      type: object
+      discriminator:
+        propertyName: changeUserProfileType
+      properties:
+        usuarioId:
+          type: integer
+        perfilId:
+          type: integer
+      required: 
+        - usuarioId
+        - perfilId
+          
+
+    Employee:
+      type: object
+      discriminator:
+        propertyName: employeeType
+      properties:
+        rolPersonaId:
+          type: integer
+        persona:
+          $ref: '#/components/schemas/Person'
+        puntoVenta:
+          $ref: '#/components/schemas/PointSale' 
+        rolFuncional:
+          $ref: '#/components/schemas/FunctionalRole'
+        provisiones:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProvisionedApplication'
+          
+    ProvisionedApplication:
+      type: object
+      discriminator:
+        propertyName: provisionedApplicationType
+      properties:
+        usuarioProvId:
+          type: integer
+        perfilAdicional:
+          type: string
+          maxLength: 100
+        nombreUsuarioProv:
+          type: string
+          maxLength: 200
+          format: email
+          example: user@tdp.com
+        perfil:
+          $ref: '#/components/schemas/ApplicationProfile' 
+        aplicacion:
+          $ref: '#/components/schemas/Application' 
+          
+    ApplicationProfile:
+      type: object
+      discriminator:
+        propertyName: applicationProfileType
+      properties:
+        perfilId:
+          type: integer
+        nombre:
+          type: string
+          maxLength: 200
+          format: email
+          example: user@tdp.com
+        codigo:
+          type: string
+          maxLength: 80
+      
+    
+    Parameter:
+      type: object
+      discriminator:
+        propertyName: parameterType
+      properties:
+        parametroId:
+          type: integer
+        minutosCambioContrasena:
+          type: integer
+        diasCambioContrasena:
+          type: integer
+        diasAvisoCambioContrasena:
+          type: integer
+        diasBloqueoAutomatico:
+          type: integer
+        minutosReactivacionIntentos:
+          type: integer
+        minutosDesconexion:
+          type: integer
+        diasAprovFallidos:
+          type: integer
+        validarTotpLogin:
+          type: boolean
+        tiempoTotpLogin:
+          type: integer
+          
+          
+    Lock:
+      type: object
+      discriminator:
+        propertyName: lockType
+      properties:
+        bloqueoId:
+          type: integer
+        bloqueo:
+          type: boolean
+        comentario:
+          type: string
+      
+    Person:
+      type: object
+      discriminator:
+        propertyName: personType
+      required: 
+        - email
+        - nombres
+        - paterno
+        # - materno
+        - numDocumento
+        - celular
+        - tipoDocumento
+      properties:
+        personaId:
+          type: integer
+        email:
+          type: string
+          maxLength: 200
+          format: email
+          example: user@tdp.com
+        nombres:
+          type: string
+          maxLength: 80
+        paterno:
+          type: string
+          maxLength: 80
+        materno:
+          type: string
+          maxLength: 80
+        fechaNacimiento:
+          type: string
+        numDocumento:
+          type: string
+          maxLength: 20
+        celular:
+          type: string
+          maxLength: 20
+        telefonoFijo:
+          type: string
+          maxLength: 20
+        state:
+          type: boolean
+        autenticacionBiometrica:
+          type: boolean
+        esVendedor:
+          type: boolean
+        docNumResponsable:
+          type: string
+          maxLength: 20
+        hasUser:
+          type: boolean
+        tipoDocumento:
+          $ref: '#/components/schemas/DocumentType'
+        responsable:
+          $ref: '#/components/schemas/Responsable'
+        
+    UsuarioGrupo:
+      type: object
+      discriminator:
+        propertyName: usuarioGrupo
+      required: 
+        - certificado
+      properties:
+        usuarioGrupoId:
+          type: integer
+        numeroDoc:
+          type: string
+          maxLength: 20
+        certificado:
+          type: string
+          maxLength: 20
+        state:
+          type: boolean
+        usuarioIdRemplazo:
+          type: integer
+                    
+    DocumentType:
+      type: object
+      discriminator:
+        propertyName: documentType
+      properties:
+        tipoDocumentoId:
+          type: integer
+          format: int32
+        codigo:
+          type: string
+          example: DNI
+          maxLength: 5
+        nombre:
+          type: string
+        tipo_codificacion:
+          type: string
+        caracteres_max:
+          type: integer
+        mascara:
+          type: string        
+        state:
+          type: boolean
+        tipo:
+          type: integer
+        longitud_exacta:
+          type: boolean
+        reg_exp:
+          type: string
+      required: 
+        - tipoDocumentoId
+    
+    Company:
+      type: object
+      discriminator:
+        propertyName: companyType
+      properties:
+        empresaId:
+          type: integer
+          format: int32
+        nombreEmpresa:
+          type: string
+          example: SERVICIOS DIGITEX GUATEMALA SA
+          maxLength: 100
+        dominios:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyDomain'
+        ruc:
+          type: string
+          example: '20152585965'
+
+    Franchise:
+      type: object
+      discriminator:
+        propertyName: franshiseType
+      properties:
+        franquiciaId:
+          type: integer
+          format: int32
+        nombre:
+          type: string
+          example: SALESLAND PACIFICO
+          maxLength: 100
+        codigoFranquicia:
+          type: string
+          example: '3592'
+          maxLength: 40
+          
+    Entity:
+      type: object
+      discriminator:
+        propertyName: entityType
+      properties:
+        entidadId:
+          type: integer
+          format: int32
+        codigo:
+          type: integer
+          format: int32
+        nombreEntidad:
+          type: string
+          example: DIGITEX FIJA GUATEMALA
+          maxLength: 100
+        empresa:
+          $ref: '#/components/schemas/Company'
+          
+    PointSale:
+      type: object
+      discriminator:
+        propertyName: pointSaleType
+      properties:
+        puntoVentaId:
+          type: integer
+          format: int32
+        codigo:
+          type: string
+          example: 03522008
+          maxLength: 20
+        nombrePuntoVenta:
+          type: string
+          example: IN DIGITEX RESID FIJA GUATEMALA
+          maxLength: 100
+        grupoAd:
+          type: string
+          maxLength: 80
+        codigoAtis:
+          type: string
+          maxLength: 20
+        codigoAgencia:
+          type: string
+          maxLength: 20
+        codigoFranquicia:
+          type: string
+          maxLength: 4
+        direccion:
+          type: string
+          maxLength: 100
+        ubigeo:
+          type: string
+          maxLength: 10
+        entidad:
+          $ref: '#/components/schemas/Entity'
+        ubigeoPuntoVenta:
+          $ref: '#/components/schemas/UbigeoPointSale'
+        createdate:
+          type: string
+        expirydate:
+          type: string
+        connection:
+          type: string
+        grupoAdAnt:
+            type: string
+      required: 
+        - puntoVentaId
+          
+    CompanyHierarchy:
+      type: object
+      discriminator:
+        propertyName: companyHierarchyType
+      properties:
+        empresaId:
+          type: integer
+          format: int32
+        nombreEmpresa:
+          type: string
+          example: SERVICIOS DIGITEX GUATEMALA SA
+          maxLength: 100
+        entidades:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityHierarchy'
+        dominios:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyDomain'
+            
+    CompanyDomain:
+      type: object
+      discriminator:
+        propertyName: companyDomainType
+      properties:
+        dominioId:
+          type: integer
+          format: int32
+        dominio:
+          type: string
+          example: SERVICIOS DIGITEX GUATEMALA SA
+          maxLength: 255
+            
+    EntityHierarchy:
+      type: object
+      discriminator:
+        propertyName: entityHierarchyType
+      properties:
+        entidadId:
+          type: integer
+          format: int32
+        canalComercialId:
+          type: integer
+          format: int32
+        nombreCanalComercial:
+          type: string
+        codigo:
+          type: integer
+          format: int32
+        nombreEntidad:
+          type: string
+          example: DIGITEX FIJA GUATEMALA
+          maxLength: 100
+        puntosDeVenta:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointSaleHierarchy'
+          
+    PointSaleHierarchy:
+      type: object
+      discriminator:
+        propertyName: pointSaleHierarchyType
+      properties:
+        puntoVentaId:
+          type: integer
+          format: int32
+        codigo:
+          type: string
+          example: 03522008
+          maxLength: 20
+        grupoAd:
+          type: string
+          maxLength: 100          
+        nombrePuntoVenta:
+          type: string
+          example: IN DIGITEX RESID FIJA GUATEMALA
+          maxLength: 100
+
+    FunctionalRole:
+      type: object
+      discriminator:
+        propertyName: functionalRoleType
+      properties:
+        rolFuncionalId:
+          type: integer
+          format: int32
+        codigo:
+          type: string
+          example: null
+          maxLength: 10
+        nombre:
+          type: string
+          example: ASESOR _2DA_LINEA_ACREDITACIONES
+          maxLength: 100
+        descripcion:
+          type: string
+          example: 
+          maxLength: 100
+        tipo:
+          type: string
+          example: 
+          maxLength: 1
+        canal:
+          $ref: '#/components/schemas/Channel'
+        responsable:
+          $ref: '#/components/schemas/Person'
+        aprobadoPor:
+          $ref: '#/components/schemas/Person'
+        profilesFunctional:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileFunctional'
+          
+          
+    Ticket:
+      type: object
+      discriminator:
+        propertyName: ticketType
+      properties:
+        ticketId:
+          type: integer
+          format: int32
+        cantidadSolicitudes:
+          type: integer
+          format: int32
+        ticketNumero:
+          type: string
+          example: TIK00001
+          maxLength: 20
+        fechaCierre:
+          type: string
+          format: date
+        fecha:
+          type: string
+        createdAt:
+          type: string          
+        errorEnEjecucion:
+          type: boolean
+        solicitante:
+          $ref: '#/components/schemas/UserSecurity'
+        aprobador:
+          $ref: '#/components/schemas/UserSecurity'
+        estadoEjecucionTic:
+          $ref: '#/components/schemas/TicketExecutionStatus'   
+        tipoTicket:
+          $ref: '#/components/schemas/TicketType' 
+        tipoSolicitud:
+          $ref: '#/components/schemas/TicketRequestType' 
+        solicitudes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketRequest'
+                     
+          
+    TicketStatus:
+      type: object
+      discriminator:
+        propertyName: ticketStatusType
+      properties:
+        estadoTicketId:
+          type: integer
+          format: int32
+        nombreEstadoTicket:
+          type: string
+          example: Pendiente
+          maxLength: 40
+        colorSemaforoHex:
+          type: string
+          example: #FADBD8
+          maxLength: 10
+        colorSemaforoRgb:
+          type: string
+          example: null
+          maxLength: 10
+          
+    TicketExecutionStatus:
+      type: object
+      discriminator:
+        propertyName: ticketExecutionStatusType
+      properties:
+        estadoEjecucionTicId:
+          type: integer
+          format: int32
+        nombreEstadoEjecucionTic:
+          type: string
+          example: Pendiente
+          maxLength: 40
+        colorSemaforoHex:
+          type: string
+          example: #FADBD8
+          maxLength: 10
+        colorSemaforoRgb:
+          type: string
+          example: null
+          maxLength: 10
+        estadoTicket:
+          $ref: '#/components/schemas/TicketStatus'
+          
+    TicketType:
+      type: object
+      discriminator:
+        propertyName: ticketType
+      properties:
+        tipoTicketId:
+          type: integer
+          format: int32
+        nombreTipoTicket:
+          type: string
+          example: Gestion de Accesos
+          maxLength: 40
+          
+    TicketRequestType:
+      type: object
+      discriminator:
+        propertyName: ticketRequestTypeType
+      properties:
+        tipoSolicitudId:
+          type: integer
+          format: int32
+        nombreTipoSolicitud:
+          type: string
+          example: ALTA
+          maxLength: 20
+
+    TicketComment:
+      type: object
+      discriminator:
+        propertyName: ticketCommentType
+      properties:
+        comentario:
+          type: string
+          example: comentario de rechazo
+          maxLength: 510
+      required: 
+      - comentario
+      
+    AccountHistory:
+      type: object
+      discriminator:
+        propertyName: accountHistoryType
+      properties:
+        persona:
+          $ref: '#/components/schemas/Person'
+        solicitudes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketRequestHistory'
+            
+    TicketHistory:
+      type: object
+      discriminator:
+        propertyName: ticketHistoryType
+      properties:
+        ticketId:
+          type: integer
+          format: int32
+        cantidadSolicitudes:
+          type: integer
+          format: int32
+        ticketNumero:
+          type: string
+          example: TIK00001
+          maxLength: 20
+        fechaCierre:
+          type: string
+          format: date
+        fecha:
+          type: string
+        solicitante:
+          $ref: '#/components/schemas/UserSecurity'
+        aprobador:
+          $ref: '#/components/schemas/UserSecurity'
+        estadoEjecucionTic:
+          $ref: '#/components/schemas/TicketExecutionStatus'   
+        tipoTicket:
+          $ref: '#/components/schemas/TicketType' 
+        tipoSolicitud:
+          $ref: '#/components/schemas/TicketRequestType' 
+            
+            
+    TicketRequestHistory:
+      type: object
+      discriminator:
+        propertyName: ticketRequestHistoryType
+      properties:
+        solicitudId:
+          type: integer
+          format: int32
+        subticketNumero:
+          type: string
+          example: null
+          maxLength: 20
+        fechaCese:
+          type: string
+        comentario:
+          type: string
+          maxLength: 510
+        fechaAprobacion:
+          type: string
+        personaId:
+          type: integer
+          format: int32
+        puntoVentaId:
+          type: integer
+          format: int32
+        rolFuncional:
+          $ref: '#/components/schemas/FunctionalRole' 
+        estadoEjecucionSol:
+          $ref: '#/components/schemas/TicketRequestExecutionStatus'
+        persona:
+          $ref: '#/components/schemas/Person'
+        solicitudPersona:
+          $ref: '#/components/schemas/PersonRequest'
+        puntoVenta:
+          $ref: '#/components/schemas/PointSale'
+        ticket:
+          $ref: '#/components/schemas/TicketHistory'
+          
+    TicketRequestProcess:
+      type: object
+      discriminator:
+        propertyName: ticketRequestProcessType
+      properties:
+        solicitudId:
+          type: integer
+          format: int32
+        aplicacion:
+          type: string
+          maxLength: 500
+        perfil:
+          type: string
+          maxLength: 500
+        detalle:
+          type: string
+          maxLength: 500
+        exito:
+          type: integer
+          format: int32
+          
+
+    RetryStatus:
+      type: object
+      discriminator:
+        propertyName: retryStatusType
+      properties:
+        estadoReintentoId:
+          type: integer
+          format: int32
+        desEstadoReintento:
+          type: string
+          example: Reintento requerido
+          maxLength: 30
+
+    InitialLoadRetry:
+      type: object
+      discriminator:
+        propertyName: initialLoadRetryType
+      properties:
+        diasAprovisionados:
+          type: integer
+          format: int32
+        solicitudes:
+          $ref: '#/components/schemas/Pageable'
+        estadosReintento:
+          type: array
+          items:
+            $ref: '#/components/schemas/RetryStatus'
+            
+    FailedRequest:
+      type: object
+      discriminator:
+        propertyName: failedRequestType
+      properties:
+        solicitudId:
+          type: integer
+          format: int32
+        fecha:
+          type: string
+        solicitante:
+          type: string
+        tipo:
+          type: string
+        trabajador:
+          type: string
+        nomPuntoVenta:
+          type: string
+        nomRolFuncional:
+          type: string
+        aprobador:
+          type: string
+        estadoReintento:
+          $ref: '#/components/schemas/RetryStatus'
+        
+               
+    TicketRequest:
+      type: object
+      discriminator:
+        propertyName: ticketRequestType
+      properties:
+        solicitudId:
+          type: integer
+          format: int32
+        subticketNumero:
+          type: string
+          example: null
+          maxLength: 20
+        fechaCese:
+          type: string
+        comentario:
+          type: string
+          maxLength: 510
+        fechaAprobacion:
+          type: string
+        docNumResponsable:
+          type: string
+          maxLength: 20
+        personaId:
+          type: integer
+          format: int32
+        puntoVentaId:
+          type: integer
+          format: int32
+        errorEnEjecucion:
+          type: boolean
+        rolFuncional:
+          $ref: '#/components/schemas/FunctionalRole' 
+        estadoEjecucionSol:
+          $ref: '#/components/schemas/TicketRequestExecutionStatus'
+        persona:
+          $ref: '#/components/schemas/Person'
+        solicitudPersona:
+          $ref: '#/components/schemas/PersonRequest'
+        puntoVenta:
+          $ref: '#/components/schemas/PointSale'
+
+    PersonRequest:
+      type: object
+      discriminator:
+        propertyName: personRequestType
+      properties:
+        solicitudId:
+          type: integer
+        email:
+          type: string
+          maxLength: 200
+          format: email
+          example: user@tdp.com
+        nombres:
+          type: string
+        paterno:
+          type: string
+          maxLength: 80
+        materno:
+          type: string
+          maxLength: 80
+        fechaNacimiento:
+          type: string
+        numDocumento:
+          type: string
+          maxLength: 20
+        celular:
+          type: string
+          maxLength: 20
+        telefonoFijo:
+          type: string
+          maxLength: 20
+        autenticacionBiometrica:
+          type: boolean
+        esVendedor:
+          type: boolean
+        tipoDocumento:
+          $ref: '#/components/schemas/DocumentType'
+      required: 
+        - email
+        - nombres
+        - paterno
+        # - materno
+        - numDocumento
+        - celular
+          
+    TicketRequestStatus:
+      type: object
+      discriminator:
+        propertyName: ticketRequestStatusType
+      properties:
+        estadoSolicitudId:
+          type: integer
+          format: int32
+        nombreEstadoSolicitud:
+          type: string
+          example: null
+          maxLength: 40
+        colorSemaforoHex:
+          type: string
+          example: #FADBD8
+          maxLength: 10
+        colorSemaforoRgb:
+          type: string
+          example: null
+          maxLength: 10
+    
+    ApplicationResetPasswordRequest:
+      description: solicitud de cambio de contraseña
+      type: object
+      discriminator:
+        propertyName: applicationResetPasswordRequestType
+      properties:
+        applicationId:
+          type: integer
+          format: int32
+          example: 28
+        password:
+          type: string
+          example: null
+    
+    BlockAllAppRequest:
+      description: solicitud de bloqueo o desbloqueo de todas las aplicaciones incluyendo SIAM
+      type: object
+      discriminator:
+        propertyName: blockAllAppRequestType
+      properties:
+        usuarioId:
+          type: integer
+          format: int32
+          example: 28
+        username:
+          type: string
+          example: null
+        accion:
+          type: integer
+          example: 1
+        motivo:
+          type: string
+          example: null
+          
+    UnLockUserSiamRequest:
+      description: desbloqueo de un usuario Siam
+      type: object
+      discriminator:
+        propertyName: unLockUserSiamRequestType
+      properties:
+        usuarioId:
+          type: integer
+          format: int32
+          example: 28
+        motivo:
+          type: string
+          example: null
+          
+    SiamResetPasswordRequest:
+      description: solicitud de cambio de contraseña de siam
+      type: object
+      discriminator:
+        propertyName: siamResetPasswordRequestType
+      properties:
+        currentPassword:
+          type: string
+          example: null
+        newPassword:
+          type: string
+          example: null
+    
+    StatusApplicationsRequest:
+      description: solicitud para listar estados de aplicaciones de un usuario según su último ticket
+      type: object
+      discriminator:
+        propertyName: StatusApplicationsRequestType
+      properties:
+        usuarioId:
+          type: integer
+          example: 28
+        ticket:
+          type: string
+          example: null
+    
+    StatusApplicationsResponse:
+      description: respuesta de solicitud para listar estados de aplicaciones de un usuario según su último ticket
+      type: object
+      discriminator:
+        propertyName: StatusApplicationsResponseType
+      properties:
+        aplicacionId:
+          type: integer
+          example: 26
+        nombreAplicacion:
+          type: string
+          example: null
+        aplicacionBloqueada:
+          type: boolean
+          example: false
+        exito:
+          type: boolean
+          example: true
+        detalle:
+          type: string
+          example: null
+          
+    ApplicationResetPasswordResponse:
+      description: respuesta de cambio de contraseña
+      type: object
+      discriminator:
+        propertyName: applicationResetPasswordResponseType
+      properties:
+        state:
+          type: boolean
+          example: true
+        msg:
+          type: string
+          example: null
+    
+    ValidateMessage:
+      description: state con message
+      type: object
+      discriminator:
+        propertyName: validateMessageType
+      properties:
+        state:
+          type: boolean
+          example: true
+        msg:
+          type: string
+          example: null
+
+    TicketRequestExecutionStatus:
+      type: object
+      discriminator:
+        propertyName: ticketRequestExecutionStatusType
+      properties:
+        estadoEjecucionSolId:
+          type: integer
+          format: int32
+        nombreEstadoEjecucionSol:
+          type: string
+          example: null
+          maxLength: 40
+        colorSemaforoHex:
+          type: string
+          example: #FADBD8
+          maxLength: 10
+        colorSemaforoRgb:
+          type: string
+          example: null
+          maxLength: 10
+        estadoSolicitud:
+          $ref: '#/components/schemas/TicketRequestStatus'
+        
+          
+    UserSecurityPageableActive: 
+      description: columna activa para paginación
+      type: string
+      enum: 
+      - usuarioId
+      - nombre
+      - nombres
+      - paterno
+      - materno
+      - email
+      
+      
+    CustomPageable: 
+      type: object
+      discriminator:
+        propertyName: customPageableType
+      properties:
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        atributos:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityAttribute'
+        active:
+          type: string
+          example: null
+          maxLength: 40
+        direction:
+          type: string
+          example: null
+          maxLength: 5
+      
+    FilterType: 
+      description: tipo de parametro para filtro en paginación
+      type: string
+      enum: 
+      - TEXT
+      - SELECT_MULTIPLE
+      - RADIO_BUTTON
+      - NUMBER
+      - TIME
+      - DATE      
+
+    AttachedFile:
+      description: Archivo adjunto en base64
+      type: object
+      discriminator:
+        propertyName: attachedFileType
+      properties:
+        nombreArchivo:
+          type: string
+          example: demo.docx
+        archivoBase64:
+          type: string
+          example: ZGVtbw==
+
+
+    EntityAttribute: 
+      type: object
+      discriminator:
+        propertyName: entityAttributeType
+      properties:
+        value:
+          type: string
+          example: null
+          maxLength: 40
+        field:
+          type: string
+          example: null
+          maxLength: 40
+        filterType:
+          type: string
+          example: null
+          maxLength: 40
+      
+    EmployeePageableActive: 
+      description: columna activa para paginación
+      type: string
+      enum: 
+      - tipoDocumento
+      - numeroDocumento
+      - nombres
+      - paterno
+      - materno
+      
+    TicketPageableActive:   
+      description: columna activa para paginación
+      type: string
+      enum:
+      - ticketId
+      - ticketNumero
+      - fecha
+      - createdAt
+      - tipoTicket
+      - cantidadSolicitudes
+      - estadoTicket
+
+    TicketPcPageableActive:
+      description: columna activa para paginación
+      type: string
+      enum:
+        - ticketId
+        - createdAt
+        - cantidadSolicitudes
+
+    FailRequestPageableActive:   
+      description: columna activa para paginación
+      type: string
+      enum:
+      - numeroDocumento
+      - estadoReintento
+      - fecha
+      
+    RequestType:
+      type: object
+      discriminator:
+        propertyName: requestTypeType
+      properties:
+        tipoSolicitudId:
+          type: integer
+          format: int32
+        nombre:
+          type: string
+          example: CREAR ROL FUNCIONAL
+          maxLength: 50
+    RequestStatus:
+      type: object
+      discriminator:
+        propertyName: requestStatusType
+      required:
+        - codigo
+      properties:
+        estadoSolicitudId:
+          type: integer
+          format: int32
+        nombre:
+          type: string
+          maxLength: 20
+        colorHex:
+          type: string
+          maxLength: 10
+        codigo:
+          type: string
+          maxLength: 10
+          
+    RequestPageableActive: 
+      description: columna activa para paginación
+      type: string
+      enum: 
+      - ticketNumero
+      - tipoSolicitud.nombre
+      - aprobador.nombres
+      - aprobador.username
+      - estadoSolicitud.nombre
+      - fechaSolicitud
+    ProfileFunctional:
+      type: object
+      discriminator:
+        propertyName: profileFunctionalType
+      properties:
+        perfilId:
+          type: integer
+          format: int32
+        codigo:
+          type: string
+          maxLength: 40
+        nombre:
+          type: string
+          maxLength: 100
+        aplicacion:
+          $ref: '#/components/schemas/Application'
+    Channel:
+      type: object
+      discriminator:
+        propertyName: channelType
+      properties:
+        canalId:
+          type: integer
+          format: int32
+        canalComercial:
+          $ref: '#/components/schemas/CommercialChannel'
+        canalGenerico:
+          $ref: '#/components/schemas/GenericChannel'
+    CommercialChannel:
+      type: object
+      discriminator:
+        propertyName: commercialChannelType
+      properties:
+        canalComercialId:
+          type: integer
+          format: int32
+        canalComercialCod:
+          type: string
+          example: 
+          maxLength: 3
+        nombre:
+          type: string
+          example: 
+          maxLength: 60
+        canalAmdocs:
+          $ref: '#/components/schemas/AmdocsChannel'
+        canales:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+        codigoAtis:
+          type: string
+          example: 'IN'
+          maxLength: 20
+    GenericChannel:
+      type: object
+      discriminator:
+        propertyName: genericChannelType
+      properties:
+        canalGenericoId:
+          type: integer
+          format: int32
+        nombre:
+          type: string
+          example: 
+          maxLength: 60        
+        canales:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+    AmdocsChannel:
+      type: object
+      discriminator:
+        propertyName: amdocsChannelType
+      properties:
+        canalAmdocsId:
+          type: integer
+          format: int32
+        canalAmdocsCod:
+          type: string
+          example: 
+          maxLength: 3
+        nombre:
+          type: string
+          example: 
+          maxLength: 60
+        descripcionIngles:
+          type: string
+          example: 
+          maxLength: 60
+
+    Attachments:
+      type: object
+      discriminator:
+        propertyName: attachmentsType
+      properties:
+        adjuntoId:
+          type: integer
+          format: int32
+        nombreArchivo:
+          type: string
+        referencia:
+          type: string
+        base64EncryptedFile:
+          type: string
+
+    RequestResponse:
+      type: object
+      discriminator:
+        propertyName: requestType
+      properties:
+        solicitudId:
+          type: integer
+          format: int32
+        ticketNumero:
+          type: string
+          example: REQ20210311000001
+          maxLength: 20
+          description: Numero/Codigo de solicitud
+        tipoSolicitud:
+          $ref: '#/components/schemas/RequestType'
+        functionalRole:
+          $ref: '#/components/schemas/FunctionalRole'
+        fechaEjecucion:
+          type: string
+          description: fecha de ejecucion
+        fechaSolicitud:
+          type: string
+          description: fecha de solicitud
+        estadoSolicitud:
+          $ref: '#/components/schemas/RequestStatus'
+        responsable:
+          $ref: '#/components/schemas/Person'
+        canal:
+          $ref: '#/components/schemas/Channel'
+        aprobador:
+          $ref: '#/components/schemas/Person'
+        perfilador:
+          $ref: '#/components/schemas/Person'
+        adjunto:
+          $ref: '#/components/schemas/Attachments'
+        actasReunion:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachments'
+          default: []
+        profilesFunctional:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileFunctional'
+        fechaCierre:
+          type: string
+          description: fecha de ejecucion
+        sustento:
+          type: string
+          maxLength: 255
+        comentarioAprobador:
+          type: string
+          maxLength: 255
+        comentarioPerfilamiento:
+          type: string
+          maxLength: 255
+        aplicaciones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+        base64EncryptedFile:
+          type: string
+        nombreRol:
+          type: string
+          maxLength: 80
+        nombreArchivo:
+          type: string
+        ticketNumeroModificacion:
+          type: string
+          description: Numero de ticket generado automaticamente para una solicitud de modificacion
+        fechaAprobacion:
+          type: string
+          description: fecha de aprobacion
+          
+    RequestRequest:
+      type: object
+      discriminator:
+        propertyName: requestType
+      properties:
+        solicitudId:
+          type: integer
+          format: int32
+        ticketNumero:
+          type: string
+          example: REQ20210311000001
+          maxLength: 20
+          description: Numero/Codigo de solicitud, esto se genera automaticamente
+        tipoSolicitudId:
+          type: integer
+          format: int32
+        functionalRoleId:
+          type: integer
+          format: int32
+        fechaEjecucion:
+          type: string
+          description: fecha de ejecucion
+        fechaSolicitud:
+          type: string
+          description: fecha de solicitud
+        codigoEstado:
+          type: string
+        responsableId:
+          type: integer
+          format: int32
+        canalId:
+          type: integer
+          format: int32
+        aprobadorId:
+          type: integer
+          format: int32
+        perfiladorId:
+          type: integer
+          format: int32
+        base64EncryptedFile:
+          type: string
+        nombreArchivo:
+          type: string
+        actasReunion:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachedFile'
+        fechaCierre:
+          type: string
+          description: fecha de ejecucion
+        sustento:
+          type: string
+          maxLength: 255
+        comentarioAprobador:
+          type: string
+          maxLength: 255
+        comentarioPerfilamiento:
+          type: string
+          maxLength: 255
+        aplicacionesId:
+          type: array
+          description: Lista de ids de aplicaciones
+          items:
+            type: integer
+            format: int32
+        nombreRol:
+          type: string
+          maxLength: 80
+        ticketNumeroModificacion:
+          type: string
+          description: Numero de ticket generado automaticamente para una solicitud de modificacion
+        perfilesFuncionalesId:
+          type: array
+          description: Lista de ids de perfiles de los roles funcionales
+          items:
+            type: integer
+            format: int32
+        fechaAprobacion:
+          type: string
+          description: fecha de aprobacion
+        cambioFile:
+          type: boolean
+          description: valida si modifico el archivo
+          
+          
+    UPerson:
+      type: object
+      discriminator:
+        propertyName: uPersonType
+      properties:
+        personaId:
+          type: integer
+        usuarioId:
+          type: integer
+        bloqueoAllApp:
+          type: integer
+        username:
+          type: string
+        nombre:
+          type: string
+        paterno:
+          type: string
+        materno:
+          type: string
+            
+    ResponsableRequest:
+      type: object
+      discriminator:
+        propertyName: responsableType
+      required:
+        - numDocumento
+        - tipoDocumentoId
+        - nombres
+        - paterno
+        # - materno
+        - canalId
+        - ticketRemedy
+        - email
+        - celular
+      properties:
+        personaId:
+          type: integer
+          format: int32
+        numDocumento:
+          type: string
+          maxLength: 20
+          minLength: 1
+        tipoDocumentoId:
+          type: integer
+          format: int32
+        nombres:
+          type: string
+          maxLength: 80
+          minLength: 1
+        paterno:
+          type: string
+          maxLength: 80
+          minLength: 1
+        materno:
+          type: string
+          maxLength: 80
+          minLength: 1
+        cip:
+          type: string
+          maxLength: 80
+        cargo:
+          type: string
+          maxLength: 80
+        direccion:
+          type: string
+          maxLength: 100
+        gerencia:
+          type: string
+          maxLength: 100
+        canalId:
+          type: integer
+          format: int32
+        ticketRemedy:
+          type: string
+          maxLength: 20
+          minLength: 1
+        tipo:
+          type: string
+        sustento:
+          type: string
+          maxLength: 200
+        email:
+          type: string
+          maxLength: 200
+          format: email
+          example: user@tdp.com
+          minLength: 1
+        celular:
+          type: string
+          maxLength: 20
+          minLength: 1
+          
+    ResponsablePageableActive: 
+      description: columna activa para paginación
+      type: string
+      enum: 
+      - responsableId
+      - persona.numDocumento
+      - persona.nombres
+      - canal.canalGenerico.nombre
+      - direccion
+      - gerencia
+      - tipo
+      - state
+    ValidateFunctionalRol:
+      type: object
+      discriminator:
+        propertyName: validateRolFunctionalType      
+      properties:
+        code:
+          type: string
+          maxLength: 20
+          minLength: 1
+        description:
+          type: string
+          maxLength: 100
+          
+    ProfileParameterCustom:
+        type: object
+        discriminator:
+            propertyName: profileParameterType
+        properties:
+          label:
+              type: string
+              minLength: 1
+          value:
+              type: string
+              minLength: 1
+          tipoValor:
+              type: string
+              minLength: 1
+          valor:
+              type: array
+              items:
+                $ref: '#/components/schemas/TypeValueProfileParameter'
+                
+    TypeValueProfileParameter:
+      type: object
+      discriminator:
+        propertyName: typeValueProfileParameter
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+          
+    UbigeoPointSale:
+        type: object
+        discriminator:
+            propertyName: ubigeoPointSale
+        properties:
+          ubigeo:
+              type: string
+              minLength: 10
+          distrito:
+              type: string
+              minLength: 100
+          provincia:
+              type: string
+              minLength: 100
+          departamento:
+              type: string
+              minLength: 100
+    ConfigFunctionalRole:
+        type: object
+        discriminator:
+            propertyName: configFunctionalRoleType
+        properties:
+          rolFuncionalId:
+              type: integer
+          nombreRolFuncional:
+              type: string
+              maxLength: 80
+              
+    ConfigCatalogo:
+        type: object
+        discriminator:
+            propertyName: configFunctionalRoleType
+        properties:
+          clave:
+              type: string
+              maxLength: 50
+          codigo:
+              type: string
+              maxLength: 20
+          valor:
+              type: string
+              maxLength: 100
+              
+    ConfigInitialFunctionalRole:
+        type: object
+        discriminator:
+            propertyName: configInitialFunctionalRoleType
+        properties:
+          rolesFuncionales:
+            $ref: '#/components/schemas/Pageable'
+          dependencias:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConfigCatalogo'
+          cargos:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConfigCatalogo'
+          tipos:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConfigCatalogo'
+          negocios:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConfigCatalogo'
+          canales:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConfigCatalogo'
+          autorizadoPor:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConfigCatalogo'
+          empresaAutoriza:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConfigCatalogo'
+                
+    DetailConfigFunctionalRole:
+        type: object
+        discriminator:
+            propertyName: detailConfigFunctionalRoleType
+        properties:
+          atis:
+            $ref: '#/components/schemas/ConfigAtis'
+          isis:
+            $ref: '#/components/schemas/ConfigIsis'
+            
+    ConfigAtis:
+        type: object
+        discriminator:
+            propertyName: configAtisType
+        properties:
+          esFuerzaVenta:
+            type: boolean
+          esCajeroVirtual:
+            type: boolean
+          complemento:
+              type: string
+              maxLength: 40
+              
+    ConfigIsis:
+        type: object
+        discriminator:
+            propertyName: configAtisType
+        properties:
+          dependencia:
+              type: string
+              maxLength: 3
+          cargo:
+              type: string
+              maxLength: 2
+          tipo:
+              type: string
+              maxLength: 3
+          negocio:
+              type: string
+              maxLength: 2
+          canal:
+              type: string
+              maxLength: 2
+          autorizaPor:
+              type: string
+              maxLength: 100
+              
+          empresaAutoriza:
+              type: string
+              maxLength: 100
+    ChannelCustom:
+      type: object
+      discriminator:
+        propertyName: channelCustom
+      properties:
+        nombreCanalComercial:
+          type: string
+          example: 
+          maxLength: 60
+        canalComercialCod:
+          type: string
+          example: 
+          maxLength: 3
+        codigoAtis:
+          type: string
+          example: 
+          maxLength: 20
+        nombreCanalGenerico:
+          type: string
+          example: 
+          maxLength: 60
+        canalAmdocsId:
+          type: number
+          example: 1
+        canalAmdocs:
+          $ref: '#/components/schemas/AmdocsChannel'
+        canalId:
+          type: number
+          example: 1
+          
+    TicketPc:
+      type: object
+      discriminator:
+        propertyName: ticketPcType
+      properties:
+        ticketId:
+          type: integer
+          format: int32
+        fechaAprobacion:
+          type: string
+          format: date
+        cantidadSolicitudes:
+          type: integer
+          format: int32
+        createdAt:
+          type: string          
+        errorEnEjecucion:
+          type: boolean
+        solicitante:
+          $ref: '#/components/schemas/UserSecurity'
+        aprobador:
+          $ref: '#/components/schemas/UserSecurity'
+        estadoEjecucionTic:
+          $ref: '#/components/schemas/TicketExecutionStatus'   
+        tipoSolicitud:
+          $ref: '#/components/schemas/TicketRequestType'             
+        solicitudes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketPcRequest'
+                                   
+    TicketPcRequest:
+      type: object
+      discriminator:
+        propertyName: ticketPcRequestType
+      properties:
+        solicitudId:
+          type: integer
+          format: int32     
+        puntoVentaId:
+          type: integer
+          format: int32
+        fechaAprobacion:
+          type: string
+          format: date
+        errorEnEjecucion:
+          type: boolean
+        estadoEjecucionSol:
+          $ref: '#/components/schemas/TicketRequestExecutionStatus'
+        motivosPc:
+          $ref: '#/components/schemas/MotivosPc'
+        equipoPc:
+          $ref: '#/components/schemas/EquipoPc'                        
+        activosPc:
+          $ref: '#/components/schemas/ActivosPc'                        
+        puntoVenta:
+          $ref: '#/components/schemas/PointSale'     
+                                   
+    MotivosPc:
+      type: object
+      discriminator:
+        propertyName: motivosPc
+      properties:
+        motivoId: 
+          type: integer
+          format: int32
+        nombreMotivo:
+          type: string
+
+    EquipoPc:
+      type: object
+      discriminator:
+        propertyName: equipoPc
+      properties:
+        equipoId:
+          type: integer
+        macAddress:
+          type: string
+        nombreAsignado:
+          type: string         
+#        puntoVentaOrigenId:
+#          type: integer              
+        marcasPc:
+          $ref: '#/components/schemas/MarcasPc'
+        tipoActivosPc:
+          $ref: '#/components/schemas/TipoActivosPc'
+        puntoVentaOrigen:
+          $ref: '#/components/schemas/PointSale'          
+
+    ActivosPc:
+      type: object
+      discriminator:
+        propertyName: activosPc
+      properties:
+        activoId:
+          type: integer
+        macAddress:
+          type: string              
+        nombreAsignado:
+          type: string         
+        marcasPc:
+          $ref: '#/components/schemas/MarcasPc'
+        tipoActivosPc:
+          $ref: '#/components/schemas/TipoActivosPc'       
+          
+    MarcasPc:
+      type: object
+      discriminator:
+        propertyName: marcasPc
+      properties:
+        marcaId: 
+          type: integer
+          format: int32
+        nombreMarca:
+          type: string
+
+    TipoActivosPc:
+      type: object
+      discriminator:
+        propertyName: tipoActivosPc
+      properties:
+        tipoActivoId: 
+          type: integer
+          format: int32
+        nombreActivo:
+          type: string
+               

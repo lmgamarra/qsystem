@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    
+    <named-native-query name="paginatedChannelList"  >
+        <query>    
+        	SELECT 
+        		tcc.canal_comercial_cod as [canalComercialCod], 
+        		tcc.nombre as [nombreCanalComercial], 
+        		tcc.codigo_atis as [codigoAtis], 
+        		tcg.nombre as [nombreCanalGenerico],
+        		tc.canal_id as [canalId],
+        		tca.nombre as [canalAmdocs.nombre],
+        		tca.canal_amdocs_id as [canalAmdocs.canalAmdocsId]
+			FROM tm_canales tc 
+			INNER JOIN tm_canales_comerciales tcc on tcc.canal_comercial_id = tc.canal_comercial_id 
+			INNER JOIN tm_canales_genericos tcg on tcg.canal_generico_id = tc.canal_generico_id
+			INNER JOIN tm_canal_amdocs tca on tca.canal_amdocs_id = tcc.canal_amdocs_id
+			WHERE tc.[state] = 1
+				AND #filter
+				ORDER BY #sort_column #sort_direction
+				OFFSET #start ROWS
+				FETCH NEXT #page_size ROWS ONLY        	   	
+        </query>
+    </named-native-query>
+
+    <named-native-query name="paginatedChannelList.cantidad"  >
+        <query>
+        	SELECT COUNT(*) 
+			FROM tm_canales tc 
+			INNER JOIN tm_canales_comerciales tcc on tcc.canal_comercial_id = tc.canal_comercial_id 
+			INNER JOIN tm_canales_genericos tcg on tcg.canal_generico_id = tc.canal_generico_id
+			INNER JOIN tm_canal_amdocs tca on tca.canal_amdocs_id = tcc.canal_amdocs_id 
+			WHERE tc.[state] = 1 AND #filter
+        </query>
+    </named-native-query>
+    
+</entity-mappings>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    
+    <named-native-query name="paginatedFailRequestList"  >
+        <query>
+			SELECT DISTINCT 
+			ts.solicitud_id AS [solicitudId],
+			ts.created_at AS [fecha],
+			CONCAT_WS(' - ',
+			CONCAT_WS(' ',
+			ttd.codigo ,
+			tp.numero_doc),
+			CONCAT_WS(' ',
+			tp.nombres,
+			tp.paterno)) AS [solicitante],
+			tts.nombre AS [tipo],
+			CONCAT_WS(' - ',
+			CONCAT_WS(' ',
+			ttd2.codigo ,
+			tsp.numero_doc),
+			CONCAT_WS(' ',
+			tsp.nombres,
+			tsp.paterno)) AS [trabajador],
+			ts.estado_reintento AS [estadoReintento.estadoReintentoId],
+			(CASE
+		    WHEN ts.estado_reintento=1 THEN 'Reintento Requerido'
+		    WHEN ts.estado_reintento=2 THEN 'En proceso'
+		    WHEN ts.estado_reintento=3 THEN 'Reintento con éxito'
+		    WHEN ts.estado_reintento=4 THEN 'Reintento fallido'
+		    ELSE 'Pendiente'
+			END) AS [estadoReintento.desEstadoReintento],
+			tpv.nombre AS [nomPuntoVenta],
+			trf.nombre AS [nomRolFuncional],
+			CONCAT_WS(' ',
+			tp2.nombres,
+			tp2.paterno) AS [aprobador]
+		FROM
+			tga_solicitudes ts
+		INNER JOIN tgr_tickets tt ON
+			tt.ticket_id = ts.ticket_id
+		INNER JOIN tm_tipos_solicitudes tts ON
+			tts.tipo_solicitud_id = tt.tipo_solicitud_id
+		INNER JOIN tga_solicitudes_personas tsp ON
+			tsp.solicitud_id = ts.solicitud_id
+		INNER JOIN tusm_tipos_documentos ttd2 ON
+			ttd2.tipo_documento_id = tsp.tipo_documento_id
+		LEFT JOIN tsg_usuarios tu ON
+			tu.usuario_id = tt.socio_id
+		LEFT JOIN tus_personas tp ON
+			tp.persona_id = tu.persona_id
+		LEFT JOIN tusm_tipos_documentos ttd ON
+			ttd.tipo_documento_id = tp.tipo_documento_id
+		INNER JOIN tga_log_ws tlw ON
+			tlw.solicitud_id = ts.solicitud_id  and tlw.[state] = 1
+		INNER JOIN tm_puntos_ventas tpv ON tpv.punto_venta_id =ts.punto_venta_id 
+		INNER JOIN trf_roles_funcionales trf ON trf.rol_funcional_id =ts.rol_funcional_id 
+		LEFT JOIN tsg_usuarios tu2 ON tu2.usuario_id =tt.gestor_id 
+		LEFT JOIN tus_personas tp2 ON tp2.persona_id =tu2.persona_id 
+		WHERE
+                ts.state = 1 AND ( (ts.estado_ejecucion_sol_id in (3, 5) and ts.todas_sols_procesar is not null and tlw.exito = 0 and tlw.finalizado = 1) or ts.estado_reintento = 3)
+            and #filter
+            ORDER BY #sort_column #sort_direction
+            OFFSET #start ROWS
+            FETCH NEXT #page_size ROWS ONLY
+        </query>
+    </named-native-query>
+
+    <named-native-query name="paginatedFailRequestList.cantidad"  >
+        <query>
+            SELECT
+			count(*)
+			from
+			(
+			SELECT DISTINCT 
+				ts.solicitud_id as solicitudId
+			FROM
+			tga_solicitudes ts
+			INNER JOIN tgr_tickets tt ON
+				tt.ticket_id = ts.ticket_id
+			INNER JOIN tm_tipos_solicitudes tts ON
+				tts.tipo_solicitud_id = tt.tipo_solicitud_id
+			INNER JOIN tga_solicitudes_personas tsp ON
+				tsp.solicitud_id = ts.solicitud_id
+			INNER JOIN tusm_tipos_documentos ttd2 ON
+				ttd2.tipo_documento_id = tsp.tipo_documento_id
+			LEFT JOIN tsg_usuarios tu ON
+				tu.usuario_id = tt.socio_id
+			LEFT JOIN tus_personas tp ON
+				tp.persona_id = tu.persona_id
+			LEFT JOIN tusm_tipos_documentos ttd ON
+				ttd.tipo_documento_id = tp.tipo_documento_id
+			INNER JOIN tga_log_ws tlw ON
+				tlw.solicitud_id = ts.solicitud_id  and tlw.[state] = 1
+			INNER JOIN tm_puntos_ventas tpv ON tpv.punto_venta_id =ts.punto_venta_id 
+			INNER JOIN trf_roles_funcionales trf ON trf.rol_funcional_id =ts.rol_funcional_id 
+			LEFT JOIN tsg_usuarios tu2 ON tu2.usuario_id =tt.gestor_id 
+			LEFT JOIN tus_personas tp2 ON tp2.persona_id =tu2.persona_id 
+			WHERE
+			ts.state = 1 and #filter 
+                        AND ((ts.estado_ejecucion_sol_id in (3, 5) and ts.todas_sols_procesar is not null and tlw.exito = 0 and tlw.finalizado = 1) or ts.estado_reintento = 3)) t
+            
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="obtenerListadoSolFiltrado" >
+        <query>
+			SELECT DISTINCT 
+			ts.solicitud_id AS [solicitudId]
+		FROM
+			tga_solicitudes ts
+		INNER JOIN tgr_tickets tt ON
+			tt.ticket_id = ts.ticket_id
+		INNER JOIN tm_tipos_solicitudes tts ON
+			tts.tipo_solicitud_id = tt.tipo_solicitud_id
+		INNER JOIN tga_solicitudes_personas tsp ON
+			tsp.solicitud_id = ts.solicitud_id
+		INNER JOIN tusm_tipos_documentos ttd2 ON
+			ttd2.tipo_documento_id = tsp.tipo_documento_id
+		LEFT JOIN tsg_usuarios tu ON
+			tu.usuario_id = tt.socio_id
+		LEFT JOIN tus_personas tp ON
+			tp.persona_id = tu.persona_id
+		LEFT JOIN tusm_tipos_documentos ttd ON
+			ttd.tipo_documento_id = tp.tipo_documento_id
+		INNER JOIN tga_log_ws tlw ON
+			tlw.solicitud_id = ts.solicitud_id  and tlw.[state] = 1
+		INNER JOIN tm_puntos_ventas tpv ON tpv.punto_venta_id =ts.punto_venta_id 
+		INNER JOIN trf_roles_funcionales trf ON trf.rol_funcional_id =ts.rol_funcional_id 
+		LEFT JOIN tsg_usuarios tu2 ON tu2.usuario_id =tt.gestor_id 
+		LEFT JOIN tus_personas tp2 ON tp2.persona_id =tu2.persona_id 
+		WHERE
+		ts.state = 1 AND ((ts.estado_ejecucion_sol_id in (3, 5) and ts.todas_sols_procesar is not null and tlw.exito = 0 and tlw.finalizado = 1)) AND (ts.estado_reintento NOT IN(2,3))
+            AND #filter
+        </query>
+    </named-native-query>
+
+    
+</entity-mappings>

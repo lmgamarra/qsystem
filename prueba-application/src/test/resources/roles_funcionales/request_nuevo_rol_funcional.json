@@ -1,0 +1,45 @@
+{
+  "solicitudId": null,
+  "ticketNumero": null,
+  "tipoSolicitud": {
+    "tipoSolicitudId": 1
+  },
+  "functionalRole": null,
+  "fechaEjecucion": null,
+  "fechaSolicitud": null,
+  "fechaAprobacion": null,
+  "estadoSolicitud": {
+    "estadoSolicitudId": 0,
+    "codigo": "CREATE"
+  },
+  "responsable": {
+    "personaId": 100
+  },
+  "canal": {
+    "canalId": 3
+  },
+  "aprobador": null,
+  "perfilador": null,
+  "fechaCierre": null,
+  "sustento": "PRUEBA NUEVO ROL FUNCIONAL",
+  "comentarioAprobador": null,
+  "comentarioPerfilamiento": null,
+  "aplicaciones": [
+    {
+      "aplicacionId": 1
+    },
+    {
+      "aplicacionId": 2
+    },
+    {
+      "aplicacionId": 3
+    }
+  ],
+  "base64EncryptedFile": null,
+  "nombreRol": "APP_NUEVO_001",
+  "nombreArchivo": null,
+  "profilesFunctional": null,
+  "idRolFuncionalOld": null,
+  "ticketNumeroModificacion": null,
+  "archivoAdjunto": null
+}
