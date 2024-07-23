@@ -1,4 +1,4 @@
-# Exámen JAVA
+# Exámen...
 
 Componentes instalados:  
 jdk-11.0.21_windows-x64_bin  
